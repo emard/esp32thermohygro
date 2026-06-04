@@ -6,13 +6,12 @@ import time
 
 class SHT75:
     def __init__(self, sck_pin, data_pin):
-        self.sck = machine.Pin(sck_pin, machine.Pin.OUT)
-        self.data = machine.Pin(data_pin, machine.Pin.OUT)
-        self.data.init(machine.Pin.OPEN_DRAIN, machine.Pin.PULL_UP)
+        self.sck = Pin(sck_pin, Pin.OUT)
+        self.data = Pin(data_pin, mode=Pin.OPEN_DRAIN, pull=Pin.PULL_UP)
+        self.data.value(1)
         self.sck.value(0)
 
     def _send_command(self, cmd):
-        self.data.init(Pin.OUT)
         # Transmission Start sequence
         self.data.value(1)
         self.sck.value(0)
@@ -30,15 +29,14 @@ class SHT75:
             self.sck.value(0)
             
         # Verify Acknowledge
-        self.data.init(Pin.IN)
+        #self.data.init(mode=Pin.OPEN_DRAIN, pull=Pin.PULL_UP)
         self.sck.value(1)
         ack = self.data.value()
         self.sck.value(0)
         if ack != 0:
             print("Sensor did not acknowledge command")
-            
+
     def _wait_for_conversion(self):
-        self.data.init(Pin.IN)
         timeout = 0
         while self.data.value() != 0:
             time.sleep_ms(10)
@@ -49,18 +47,16 @@ class SHT75:
 
     def _read_byte(self, ack):
         byte = 0
-        self.data.init(Pin.IN)
         for i in range(8):
             self.sck.value(1)
             byte = (byte << 1) | self.data.value()
             self.sck.value(0)
             
         # Send Acknowledge
-        self.data.init(Pin.OUT)
-        self.data.value(ack)
+        self.data.value(not ack)
         self.sck.value(1)
         self.sck.value(0)
-        self.data.init(Pin.IN)
+        self.data.value(1)
         return byte
 
     def read_temp_humidity(self):
@@ -87,6 +83,7 @@ class SHT75:
         msb = self._read_byte(True)
         lsb = self._read_byte(True)
         crc = self._read_byte(False)
+        # print(msb,lsb,crc)
         raw_humi = (msb << 8) | lsb
         
         # Linear conversion for Humidity
