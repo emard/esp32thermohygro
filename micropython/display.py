@@ -112,8 +112,11 @@ def demo():
 
 def display_t_rh(t1:float,rh1:float,t2:float,rh2:float):
   oled.fill_rect(0,0,128,64,0)
-  oled.text("C", 50, 14, 1)
-  oled.text("%", 50, 26, 1)
+  oled.text("sensor1 sensor2", 0, 0, 1)
+  oled.text("C", 48, 14, 1)
+  oled.text("%", 48, 26, 1)
+  oled.text("C", 112, 14, 1)
+  oled.text("%", 112, 26, 1)
   if t1>-10 and t1<100:
     oled.text("%5.2f" % (t1,), 0, 14, 1)
     oled.text("%5.2f" % (rh1,), 0, 26, 1)
