@@ -2,6 +2,8 @@
 
 # SSD1306 scalable vector font
 
+# mpremote mip install ssd1306
+
 from time import sleep_ms
 from machine import SPI,Pin
 from micropython import const
