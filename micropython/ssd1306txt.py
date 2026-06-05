@@ -199,9 +199,24 @@ def text(text, x=0, y=0, color=1, spacing=6, xscale=256, yscale=256):
     polyline_fast(x0,y,xscale,yscale,font[char],buf)
     x0 += spacing
 
+# sensor = 1 or 2
+def thdisp(sensor:int, t:float, rh:float):
+  x0=((sensor-1) & 1)*64
+  xunit=46
+  oled.fill_rect(x0,0,x0+64,64,0)
+  text("SENSOR%d" % (sensor,), x0, 0, 1)
+  if t>-20 and t<100:
+    text("%4.1f" % (t,), x0, 16, 1, 12, 512, 512)
+    text("°C", x0+xunit, 16,1)
+    text("%4.1f" % (rh,), x0, 32, 1, 12, 512, 512)
+    text("%", x0+xunit, 32, 1)
+  oled.show()
+
 def demo():
   text("1234ABCD",1,32,1,12,512,512)
   text("ΔČĆĐŠŽčćđšž",0,16,1)
   oled.show()
 
-demo()
+#thdisp(1,10,20)
+#thdisp(2,15,22)
+#demo()
