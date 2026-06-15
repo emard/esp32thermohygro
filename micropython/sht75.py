@@ -1,9 +1,5 @@
 from machine import Pin
-#from time import sleep_us
-
-import machine
-import time
-
+from time import sleep_ms
 
 class SHT75:
     def __init__(self, sck_pin, data_pin):
@@ -91,7 +87,7 @@ class SHT75:
     def _wait_for_conversion(self):
         timeout = 0
         while self.data.value() != 0:
-            time.sleep_ms(10)
+            sleep_ms(10)
             timeout += 10
             if timeout > 300:
                 if self.verbose:
