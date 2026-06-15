@@ -2,10 +2,13 @@ from sht75 import SHT75
 from sht85 import SHT85
 import ssd1306txt
 
-sensor1=SHT75(sck_pin=3, data_pin=4)
-#sensor1=SHT85(sck_pin=3, data_pin=4)
-sensor2=SHT75(sck_pin=1, data_pin=2)
-#sensor2=SHT85(sck_pin=1, data_pin=2)
+sensor1=SHT85(sck_pin=3, data_pin=4)
+if sensor1.detect()==False:
+  sensor1=SHT75(sck_pin=3, data_pin=4)
+
+sensor2=SHT85(sck_pin=1, data_pin=2)
+if sensor2.detect()==False:
+  sensor2=SHT75(sck_pin=1, data_pin=2)
 
 while True:
   t1,rh1=sensor1.read_temp_humidity()

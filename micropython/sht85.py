@@ -11,6 +11,11 @@ class SHT85:
   def __init__(self, sck_pin:int, data_pin:int):
     self.i2c=SoftI2C(scl=Pin(sck_pin), sda=Pin(data_pin), freq=100000)
 
+  def detect(self)->bool:
+    if SHT85_ADDR in self.i2c.scan():
+      return True
+    return False
+
   def read_temp_humidity(self)->Tuple(float,float):
     # Send measurement command
     try:
