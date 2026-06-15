@@ -2,10 +2,10 @@
 
                      XIAO  ESP32S3
                     ┌─────────────┐
-    SHT75 2    SDA2 │1    USB   5V│
-    SHT75 2    SCK2 │2         GND│
-    SHT75 1    SDA1 │3        3.3V│
-    SHT75 1    SCK1 │4           9│ RES Reset
+    SHT75 2    SCK2 │1    USB   5V│
+    SHT75 2    SDA2 │2         GND│
+    SHT75 1    SCK1 │3        3.3V│
+    SHT75 1    SDA1 │4           9│ RES Reset
     Chip select  CS │5           8│ D1  MOSI
     Data/Command DC │6  TX       7│ D0  SCK
                     │43 TXD  RX 44│
