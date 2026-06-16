@@ -131,7 +131,7 @@ class SHT75:
         if crc == crc_check:
           temp_c = -40.0 + 0.01 * raw_temp
         else:
-          temp_c = -99.0
+          temp_c = -99.9
           if self.verbose:
             print("bad crc reading temperature")
 
@@ -156,7 +156,7 @@ class SHT75:
         if crc == crc_check:
           rh_true = (temp_c - 25.0) * (0.01 + 80.0E-6 * raw_humi) + rh_lin
         else:
-          rh_true = -99.0
+          rh_true = -99.9
           if self.verbose:
             print("bad crc reading humidity")
 

@@ -205,7 +205,7 @@ def thdisp(sensor:int, t:float, rh:float):
   xunit=46
   oled.fill_rect(x0,0,x0+64,64,0)
   text("SENSOR %d" % (sensor,), x0, 0, 1)
-  if t>-20 and t<100:
+  if t>-99 and t<100:
     text("%4.1f" % (t,), x0, 16, 1, 12, 512, 512)
     text("°C", x0+xunit, 16,1)
     text("%4.1f" % (rh,), x0, 32, 1, 12, 512, 512)

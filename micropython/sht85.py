@@ -21,7 +21,7 @@ class SHT85:
     try:
       self.i2c.writeto(SHT85_ADDR, MEASURE_CMD)
     except: # ENODEV
-      return -99.0, 0.0
+      return -99.9, -99.9
     
     # Wait for the measurement to complete (max ~15.5ms)
     sleep_ms(20)
@@ -40,4 +40,4 @@ class SHT85:
         
         return temperature, humidity
     else:
-        return -99.0, 0.0
+        return -99.9, -99.9
