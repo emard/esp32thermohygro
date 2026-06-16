@@ -1,11 +1,8 @@
-# Micropython ESP32S3 SSD1331 display driver
-
-# SSD1306 scalable vector font
-
+# SSD1306 display with scalable vector font
 # mpremote mip install ssd1306
 
 from time import sleep_ms
-from machine import SPI,Pin
+from machine import I2C,SPI,Pin
 from micropython import const
 from uctypes import addressof
 from ssd1306 import SSD1306_I2C, SSD1306_SPI
@@ -14,13 +11,34 @@ import framebuf
 width=const(128)
 height=const(64)
 
-if 1:
+try:
+  # I2C
   #                  XIAO  ESP32S3
   #                 ┌─────────────┐
-  #            SDA2 │1    USB   5V│
-  #            SCK2 │2         GND│
-  #            SDA1 │3        3.3V│
-  #            SCK1 │4           9│ RES Reset
+  #                 │1    USB   5V│
+  #                 │2         GND│
+  #                 │3        3.3V│
+  #                 │4           9│          
+  #                 │5           8│ SDA
+  #                 │6  TX       7│ SCL
+  #                 │43 TXD  RX 44│
+  #                 └─────────────┘
+  #                    top view
+
+  # SCL / D0    Pin     7       I2C Clock (SCL)
+  # SDA / D1    Pin     8       I2C Data  (SDA)
+  
+  i2c = I2C(1, scl=Pin(7), sda=Pin(8), freq=400000)
+  oled = SSD1306_I2C(width, height, i2c)
+
+except:
+  # SPI
+  #                  XIAO  ESP32S3
+  #                 ┌─────────────┐
+  #                 │1    USB   5V│
+  #                 │2         GND│
+  #                 │3        3.3V│
+  #                 │4           9│ RES Reset
   # Chip select  CS │5           8│ D1  MOSI
   # Data/Command DC │6  TX       7│ D0  SCK
   #                 │43 TXD  RX 44│
@@ -36,9 +54,9 @@ if 1:
   hspi = SPI(1)
   hspi.init(sck=Pin(7),mosi=Pin(8),miso=None)
 
-  dc = Pin(6)    # data/command
+  dc  = Pin(6)   # data/command
   rst = Pin(9)   # reset
-  cs = Pin(5)   # chip select, some modules do not have a pin for this
+  cs  = Pin(5)   # chip select, some modules do not have a pin for this
 
   oled = SSD1306_SPI(width, height, hspi, dc, rst, cs)
 
@@ -192,7 +210,6 @@ def polyline_fast(x:int, y:int, xscale:int, yscale:int, line, buf):
 # color = bytearray([r,g,b])
 # spacing = between chars
 def text(text, x=0, y=0, color=1, spacing=6, xscale=256, yscale=256):
-  dc.value(0) # command
   buf = bytearray([0,0,0,0,color])
   x0 = x
   for char in text:
