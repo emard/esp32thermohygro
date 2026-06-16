@@ -1,0 +1,1 @@
+https://github.com/Sensirion/sht85-stm-sample-project
