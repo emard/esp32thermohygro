@@ -80,7 +80,9 @@ class SHT75:
         self.data.value(1)
         return byte
 
-    def read_temp_humidity(self):
+    # T[°C], RH[%], serial_no (always 0)
+    def read_temp_humidity(self)->Tuple(float,float,int):
+
         # Read status register
         cmd=CMD_READ_STATUS
         ack=self._send_command(cmd)
@@ -132,7 +134,7 @@ class SHT75:
           if self.verbose:
             print("bad crc reading humidity")
 
-        return temp_c, rh_true
+        return temp_c, rh_true, 0
 
 # Example Usage
 # sensor = SHT75(sck_pin=14, data_pin=13)

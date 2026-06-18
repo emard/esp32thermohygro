@@ -217,16 +217,18 @@ def text(text, x=0, y=0, color=1, spacing=6, xscale=256, yscale=256):
     x0 += spacing
 
 # sensor = 1 or 2
-def thdisp(sensor:int, model:str, t:float, rh:float):
+def thdisp(sensor:int, model:str, t:float, rh:float, serial:int):
   x0=((sensor-1) & 1)*64
   xunit=46
   oled.fill_rect(x0,0,x0+64,64,0)
   text("%-5s %d" % (model,sensor,), x0, 0, 1)
-  if t>-99 and t<100:
+  if t>-99 and t<105:
     text("%4.1f" % (t,), x0, 16, 1, 12, 512, 512)
     text("°C", x0+xunit, 16,1)
     text("%4.1f" % (rh,), x0, 32, 1, 12, 512, 512)
     text("%", x0+xunit, 32, 1)
+    if serial:
+      text("%08X" % (serial,), x0, 48, 1)
   oled.show()
 
 def demo():
