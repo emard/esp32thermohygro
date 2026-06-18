@@ -234,7 +234,7 @@ def thdisp(sensor:int, model:str, t:float, rh:float, serial:int):
       text("%4.0f" % (rh,), x0, 32, 1, 12, 512, 512)
     text("%", x0+xunit, 32, 1)
     if serial:
-      text("%08X" % (serial,), x0, 48, 1)
+      text("%08X" % (serial,), x0, 56, 1)
   oled.show()
 
 def demo():
