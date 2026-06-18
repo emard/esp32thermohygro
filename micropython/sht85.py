@@ -35,7 +35,7 @@ class SHT85:
     except:
       return 0
     if len(data) == 6:
-      if True or (self.crc_calc(data[0],data[1]) == data[2] and self.crc_calc(data[3],data[4]) == data[5]):
+      if self.crc_calc(data[0],data[1]) == data[2] and self.crc_calc(data[3],data[4]) == data[5]:
         return data[0]<<24 | data[1]<<16 | data[3]<<8 | data[4]
       else:
         return 0
