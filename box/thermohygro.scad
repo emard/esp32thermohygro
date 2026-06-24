@@ -411,14 +411,14 @@ module cut_oled_th2()
 // xiao_esp32s3
 module cut_usb_th2()
 {
-  translate([36,66,21])
+  translate([36.3,66,21])
     cube([12,10,10],center=true);
 }
 
 module cut_rj45_th2()
 {
   // cut off opening for 2 RJ-45
-  translate([Thick*1.5+m,Width/2+2.5,15])
+  translate([Thick*1.5+m,Width/2+2,15])
   {
      cube([Thick*2,36,16],center=true);
   }
