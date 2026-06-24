@@ -8,66 +8,67 @@ from uctypes import addressof
 from ssd1306 import SSD1306_I2C, SSD1306_SPI
 import framebuf
 
-width=const(128)
-height=const(64)
+def init(disp_width:int=128,disp_height:int=64,scl_pin:int=7,sda_pin:int=8,dc_pin:int=6,rst_pin:int=9,cs_pin:int=5):
+  global oled,width,height
+  width=disp_width
+  height=disp_height
+  try:
+    # I2C
+    #                  XIAO  ESP32S3
+    #                 ┌─────────────┐
+    #                 │1    USB   5V│
+    #                 │2         GND│
+    #                 │3        3.3V│
+    #                 │4           9│
+    #                 │5           8│ SDA
+    #                 │6  TX       7│ SCL
+    #                 │43 TXD  RX 44│
+    #                 └─────────────┘
+    #                    top view
 
-try:
-  # I2C
-  #                  XIAO  ESP32S3
-  #                 ┌─────────────┐
-  #                 │1    USB   5V│
-  #                 │2         GND│
-  #                 │3        3.3V│
-  #                 │4           9│          
-  #                 │5           8│ SDA
-  #                 │6  TX       7│ SCL
-  #                 │43 TXD  RX 44│
-  #                 └─────────────┘
-  #                    top view
-
-  # SCL / D0    Pin     7       I2C Clock (SCL)
-  # SDA / D1    Pin     8       I2C Data  (SDA)
+    # SCL / D0    Pin     7       I2C Clock (SCL)
+    # SDA / D1    Pin     8       I2C Data  (SDA)
   
-  i2c = I2C(1, scl=Pin(7), sda=Pin(8), freq=400000)
-  oled = SSD1306_I2C(width, height, i2c)
+    i2c = I2C(1, scl=Pin(scl_pin), sda=Pin(sda_pin), freq=400000)
+    oled = SSD1306_I2C(width, height, i2c)
 
-except:
-  # SPI
-  #                  XIAO  ESP32S3
-  #                 ┌─────────────┐
-  #                 │1    USB   5V│
-  #                 │2         GND│
-  #                 │3        3.3V│
-  #                 │4           9│ RES Reset
-  # Chip select  CS │5           8│ D1  MOSI
-  # Data/Command DC │6  TX       7│ D0  SCK
-  #                 │43 TXD  RX 44│
-  #                 └─────────────┘
-  #                    top view
+  except:
+    # SPI
+    #                  XIAO  ESP32S3
+    #                 ┌─────────────┐
+    #                 │1    USB   5V│
+    #                 │2         GND│
+    #                 │3        3.3V│
+    #                 │4           9│ RES Reset
+    # Chip select  CS │5           8│ D1  MOSI
+    # Data/Command DC │6  TX       7│ D0  SCK
+    #                 │43 TXD  RX 44│
+    #                 └─────────────┘
+    #                    top view
 
-  # SCL / D0    Pin     7       SPI Clock (SCK)
-  # SDA / D1    Pin     8       SPI Data (MOSI)
-  # RES / RST   Pin     9       Reset
-  # DC          Pin     6       Data / Command
-  # CS          Pin     5       Chip Select
-  
-  hspi = SPI(1)
-  hspi.init(sck=Pin(7),mosi=Pin(8),miso=None)
+    # SCL / D0    Pin     7       SPI Clock (SCK)
+    # SDA / D1    Pin     8       SPI Data (MOSI)
+    # RES / RST   Pin     9       Reset
+    # DC          Pin     6       Data / Command
+    # CS          Pin     5       Chip Select
 
-  dc  = Pin(6)   # data/command
-  rst = Pin(9)   # reset
-  cs  = Pin(5)   # chip select, some modules do not have a pin for this
+    hspi = SPI(1)
+    hspi.init(sck=Pin(scl_pin),mosi=Pin(sda_pin),miso=None)
 
-  oled = SSD1306_SPI(width, height, hspi, dc, rst, cs)
+    dc  = Pin(dc_pin)  # data/command
+    rst = Pin(rst_pin) # reset
+    cs  = Pin(cs_pin)  # chip select, some modules do not have a pin for this
+
+    oled = SSD1306_SPI(width, height, hspi, dc, rst, cs)
 
 # Initialize
 
-oled.poweron()
-oled.contrast(100)
-oled.invert(0)
-oled.rotate(True)
-oled.fill(0)
-oled.show()
+  oled.poweron()
+  oled.contrast(100)
+  oled.invert(0)
+  oled.rotate(True)
+  oled.fill(0)
+  oled.show()
 
 # vector 5x7 font as associative array of polylines, delimited by 128,any
 font = {
@@ -179,7 +180,6 @@ font = {
 "š":bytearray([4,2, 1,2, 0,3, 1,4, 3,4, 4,5, 3,6, 0,6, 128,128, 1,0, 2,1, 3,0]),
 "ž":bytearray([0,2, 4,2, 0,6, 4,6, 128,128, 1,0, 2,1, 3,0]),
 }
-
 
 # x,y  = offset
 # xscale, yscale = 256 default for 5x7 font
