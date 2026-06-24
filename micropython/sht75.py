@@ -3,7 +3,14 @@ from time import sleep_ms
 from shtcrctab import crctable
 
 class SHT75:
-    def __init__(self, sck_pin, data_pin):
+    def __init__(self, sck_pin, data_pin, chip_v=4):
+        # V3 chip is identified by numerical 3 digit code
+        # printed on sensor housing
+        # V4 chip is identified by alphanumerical 3 digits/letters code
+        # printed on sensor housing
+        # V3 and V4 have slightly different T and RH conversion coefficients
+        # usuallly T differes cca 0.1°C and RH differs cca 1%
+        self.chip_v=chip_v
         self.sck = Pin(sck_pin, Pin.OUT)
         self.data = Pin(data_pin, mode=Pin.OPEN_DRAIN, pull=Pin.PULL_UP)
         self.data.value(1)
@@ -103,7 +110,12 @@ class SHT75:
         crc_check = self.crc_calc(status,cmd,msb,lsb)
         raw_temp = (msb << 8) | lsb
         if crc == crc_check:
-          temp_c = -40.0 + 0.01 * raw_temp
+          # for V3 chip at 3.3V supply from internet
+          if self.chip_v==3:
+            temp_c = -39.63 + 0.01 * raw_temp
+          # for V4 chip at 3.3V supply from new datasheet
+          if self.chip_v==4:
+            temp_c = -39.65 + 0.01 * raw_temp
         else:
           temp_c = -99.9
           if self.verbose:
@@ -123,8 +135,19 @@ class SHT75:
         crc_check = self.crc_calc(status,cmd,msb,lsb)
         raw_humi = (msb << 8) | lsb
         
-        # Linear conversion for Humidity
-        rh_lin = -4.0 + 0.0405 * raw_humi - 2.8E-6 * (raw_humi ** 2)
+        # Linear 12-bit conversion for Humidity for V3 chip
+        # V3 chip is identified by numerical 3 digit code
+        # printed on sensor housing
+        # coefficients are in datasheet from 2003
+        if self.chip_v==3:
+          rh_lin = -4.0 + 0.0405 * raw_humi - 2.8E-6 * (raw_humi ** 2)
+
+        # Linear 12-bit conversion for Humidity for V4 chip
+        # V4 chip is identified by alphanumerical 3 digits/letters code
+        # printed on sensor housing
+        # coefficients are in datasheet from 2011
+        if self.chip_v==4:
+          rh_lin = -2.0468 + 0.0367 * raw_humi - 1.5955E-6 * (raw_humi ** 2)
 
         # Temperature compensation for Humidity
         if crc == crc_check:

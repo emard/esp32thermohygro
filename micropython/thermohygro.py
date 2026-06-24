@@ -19,7 +19,7 @@ while True:
     sensor1=SHT85(sck_pin=sensor1_scl_pin, data_pin=sensor1_sda_pin)
     if sensor1.detect()==False:
       model1="SHT75"
-      sensor1=SHT75(sck_pin=sensor1_scl_pin, data_pin=sensor1_sda_pin)
+      sensor1=SHT75(sck_pin=sensor1_scl_pin, data_pin=sensor1_sda_pin, chip_v=4)
   t1,rh1,serial1=sensor1.read_temp_humidity()    
   if t1<-99:
     model1=""
@@ -29,7 +29,7 @@ while True:
     sensor2=SHT85(sck_pin=sensor2_scl_pin, data_pin=sensor2_sda_pin)
     if sensor2.detect()==False:
       model2="SHT75"
-      sensor2=SHT75(sck_pin=sensor2_scl_pin, data_pin=sensor2_sda_pin)
+      sensor2=SHT75(sck_pin=sensor2_scl_pin, data_pin=sensor2_sda_pin, chip_v=4)
   t2,rh2,serial2=sensor2.read_temp_humidity()
   if t2<-99:
     model2=""
