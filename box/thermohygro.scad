@@ -72,7 +72,7 @@ Thick           = 2;//[2:5]
 // - Largeur - Width
   Width         = PCBWidth+2*(Thick+FootClrY);
 // - Hauteur - Height  
-  Height        = 29;
+  Height        = 24    ;
   
 /* [Box options] */
 // Pieds PCB - PCB feet (x4) 
@@ -98,7 +98,7 @@ Thick           = 2;//[2:5]
 // mounting legs clearance
   MountClearance = 0.1;
   // clearance between Top and Bottom shell
-  ShellClearance = 0.5;
+  ShellClearance = 0.4;
 
 
 // mounting hole diameters
@@ -255,12 +255,13 @@ module Coque(top=0){//Coque - Shell
             for(i = [0:1])
             union(){ //sides inner holes
                 $fn=20;
-                translate([i*(Length - 6*Thick-10) + MountHoleXpos + 3*Thick+5,20,Height/2+MountHolePos]){
+                isign=2*(i-0.5);
+                translate([i*(Length - 6*Thick-10) + isign*MountHoleXpos + 3*Thick+5,20,Height/2+MountHolePos]){
                     rotate([90,0,0]){
                     cylinder(d=MountInnerHole,20);
                     }
                 }
-                translate([i*(Length - 6*Thick-10) + MountHoleXpos + 3*Thick+5,Width-20,Height/2+MountHolePos]){
+                translate([i*(Length - 6*Thick-10) + isign*MountHoleXpos + 3*Thick+5,Width-20,Height/2+MountHolePos]){
                     rotate([-90,0,0]){
                     cylinder(d=MountInnerHole,20);
                     }
@@ -271,12 +272,13 @@ module Coque(top=0){//Coque - Shell
             union() // sides outer holes
             {
                 $fn=20;
-                translate([i*(Length - 6*Thick-10) - MountHoleXpos + 3*Thick+5,5,Height/2-MountHolePos+ShellClearance]){
+                isign=2*(i-0.5);
+                translate([i*(Length - 6*Thick-10) + isign*MountHoleXpos + 3*Thick+5,5,Height/2-MountHolePos+ShellClearance]){
                     rotate([90,0,0]){
                     cylinder(d=MountOuterHole,20);
                     }
                 }
-                translate([i*(Length - 6*Thick-10) - MountHoleXpos + 3*Thick+5,Width+5,Height/2-MountHolePos+ShellClearance]){
+                translate([i*(Length - 6*Thick-10) + isign*MountHoleXpos + 3*Thick+5,Width+5,Height/2-MountHolePos+ShellClearance]){
                     rotate([90,0,0]){
                     cylinder(d=MountOuterHole,20);
                     }
@@ -404,23 +406,23 @@ module cut_oled_th1()
 // ssd1306_i2c
 module cut_oled_th2()
 {
-  translate([32,11,20])
+  translate([33,11,20])
     cube([15,25,10]);    
 }
 
 // xiao_esp32s3
 module cut_usb_th2()
 {
-  translate([36.3,66,21])
-    cube([12,10,10],center=true);
+  translate([36.5,69,21])
+    cube([13,10,10],center=true);
 }
 
 module cut_rj45_th2()
 {
   // cut off opening for 2 RJ-45
-  translate([Thick*1.5+m,Width/2+2,15])
+  translate([Thick*1.5+m,Width/2+2,12.5])
   {
-     cube([Thick*2,36,16],center=true);
+     cube([Thick*2,36,12],center=true);
   }
 }
 
