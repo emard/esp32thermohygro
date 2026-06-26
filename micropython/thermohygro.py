@@ -179,4 +179,4 @@ while True:
   if t2<-99:
     model2=""
   ssd1306txt.thdisp(2,model2,t2,rh2,serial2)
-  print("T1=%5.2f C RH1=%5.2f %% T2=%5.2f C RH2=%5.2f %% " % (t1,rh1,t2,rh2))
+  print("S1=%08X T1=%5.2f C RH1=%5.2f %% S2=%08X T2=%5.2f C RH2=%5.2f %% " % (serial1,t1,rh1,serial2,t2,rh2))
