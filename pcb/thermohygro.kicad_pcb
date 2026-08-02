@@ -1390,12 +1390,6 @@
 		(path "/0e36929f-c656-4ac4-86f0-7fb563bb0d6d")
 		(sheetname "/")
 		(sheetfile "thermohygro.kicad_sch")
-		(units
-			(unit
-				(name "A")
-				(pins "SH" "8" "7" "6" "5" "4" "3" "2" "1")
-			)
-		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -1479,17 +1473,17 @@
 			(uuid "35a53c58-1ebb-4544-9c69-111afc65cbf3")
 		)
 		(fp_line
-			(start 13.4 5.3)
-			(end 13.4 1.3)
+			(start 13.5 5.3)
+			(end 13.5 1.3)
 			(stroke
 				(width 0.05)
 				(type default)
 			)
 			(layer "F.CrtYd")
-			(uuid "d88a0203-cef1-4cb6-bc25-ba23c5885b4e")
+			(uuid "7414827f-e872-4099-997c-35ce44ee1133")
 		)
 		(fp_line
-			(start 13.4 1.3)
+			(start 13.5 1.3)
 			(end 12.89 1.3)
 			(stroke
 				(width 0.05)
@@ -1510,7 +1504,7 @@
 		)
 		(fp_line
 			(start 12.89 5.3)
-			(end 13.4 5.3)
+			(end 13.5 5.3)
 			(stroke
 				(width 0.05)
 				(type default)
@@ -1560,7 +1554,7 @@
 		)
 		(fp_line
 			(start -4 1.3)
-			(end -4.4 1.3)
+			(end -4.5 1.3)
 			(stroke
 				(width 0.05)
 				(type default)
@@ -1579,7 +1573,7 @@
 			(uuid "c6baee50-be6c-4a40-a699-9e5daa11a798")
 		)
 		(fp_line
-			(start -4.4 5.3)
+			(start -4.5 5.3)
 			(end -4 5.3)
 			(stroke
 				(width 0.05)
@@ -1589,14 +1583,14 @@
 			(uuid "6c62085c-397a-4545-9736-36b18248debc")
 		)
 		(fp_line
-			(start -4.4 1.3)
-			(end -4.4 5.3)
+			(start -4.5 1.3)
+			(end -4.5 5.3)
 			(stroke
 				(width 0.05)
 				(type default)
 			)
 			(layer "F.CrtYd")
-			(uuid "7414827f-e872-4099-997c-35ce44ee1133")
+			(uuid "d88a0203-cef1-4cb6-bc25-ba23c5885b4e")
 		)
 		(fp_line
 			(start 12.385 17.25)
@@ -1797,7 +1791,6 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD10_3DMODEL_DIR}/Connector_RJ.3dshapes/RJ45_Molex_9346520x_Horizontal.step"
-			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
