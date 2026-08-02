@@ -2670,7 +2670,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_RJ:RJ45_HALO_HFJ11-x2450HRL_Horizontal"
+		(property "Footprint" "rj45:RJ45_HALO_HFJ11-x2450HRL_Horizontal_closer"
 			(at 132.715 48.26 90)
 			(hide yes)
 			(show_name no)
@@ -3044,7 +3044,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_RJ:RJ45_HALO_HFJ11-x2450HRL_Horizontal"
+		(property "Footprint" "rj45:RJ45_HALO_HFJ11-x2450HRL_Horizontal_closer"
 			(at 102.235 48.26 90)
 			(hide yes)
 			(show_name no)
