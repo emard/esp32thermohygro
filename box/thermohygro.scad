@@ -405,25 +405,46 @@ module cut_oled_th1()
 }
 
 // ssd1306_i2c
-module cut_oled_th2()
+module cut_oled_th2_prototype()
 {
   translate([33,11,20])
     cube([15,25,10]);    
 }
 
+module cut_oled_th2()
+{
+  translate([27,5,20])
+    cube([15,25,10]);    
+}
+
 // xiao_esp32s3
-module cut_usb_th2()
+module cut_usb_th2_prototype()
 {
   translate([36.5,69,21])
     cube([13,10,10],center=true);
 }
 
-module cut_rj45_th2()
+module cut_usb_th2()
+{
+  translate([34,69,21])
+    cube([13,10,10],center=true);
+}
+
+module cut_rj45_th2_prototype()
 {
   // cut off opening for 2 RJ-45
   translate([Thick*1.5+m,Width/2+2,12.5])
   {
      cube([Thick*2,36,12],center=true);
+  }
+}
+
+module cut_rj45_th2()
+{
+  // cut off opening for 2 RJ-45
+  translate([Thick*1.5+m,Width/2,14])
+  {
+     cube([Thick*2,36,15],center=true);
   }
 }
 
