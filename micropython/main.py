@@ -3,5 +3,6 @@ print("from pye import pye")
 print('pye("synscan_cfg.py")')
 print("ctrl-s ctrl-q shift-arrows ctrl-c ctrl-v")
 import thermohygro
+#mpremote mip install github:robert-hh/Micropython-Editor
 #from pye import pye # don't always import to save memory
 
