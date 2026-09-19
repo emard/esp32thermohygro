@@ -1,3 +1,5 @@
+// TH2 prototype on universal 2.54mm raster PCB
+
 /* [STL element to export] */
 //Coque haut - Top shell
   TShell        = 1;// [0:No, 1:Yes]
