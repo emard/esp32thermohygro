@@ -413,7 +413,7 @@ module cut_oled_th2_prototype()
 
 module cut_oled_th2()
 {
-  translate([27,5,20])
+  translate([29.5,5.5,20])
     cube([15,25,10]);    
 }
 
@@ -426,7 +426,7 @@ module cut_usb_th2_prototype()
 
 module cut_usb_th2()
 {
-  translate([34,69,21])
+  translate([34,67,21])
     cube([13,10,10],center=true);
 }
 
