@@ -47,15 +47,24 @@ if implementation.name=="cpython":
 async def index(request):
   return redirect('index.html')
 
-# synscan request and response example:
-# question:
-# http://localhost:8080/synscan?q=:e1
-# answer in json format:
-# {':e1':'=02A10'}
-@app.get('/read')
+# request and response example:
+# simple readout in one line, the same as printed on USB serial
+# http://host/read
+# S1=2C3A02D0 T1=28.79 C RH1=41.06 % S2=2C3A1297 T2=28.50 C RH2=41.18 %
+@app.get('/line')
 async def index(request):
-  answer=request.args['port']
-  return readout # debug return port number 1 or 2
+  #port=request.args['port'] # argument "port" value 1 given like http://host/read?port=1
+  return readout
+
+# request and response example:
+# readout in json format
+# http://host/json
+# {'serial1':0x1234,'t1':'28.03','rh1':'30.25'}
+@app.get('/json')
+async def index(request):
+  #port=request.args['port'] # argument "port" value 1 given like http://host/json?port=1
+  answer='{"serial1":%d,"t1":%.2f,"rh1":%.2f,"serial2":%d,"t2":%.2f,"rh2":%.2f}' % (serial1,t1,rh1,serial2,t2,rh2)
+  return answer
 
 # static files
 @app.route('<path:path>')

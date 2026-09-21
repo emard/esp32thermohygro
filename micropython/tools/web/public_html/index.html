@@ -11,21 +11,50 @@
     {
       return document.getElementById(id);
     }
-    
-    function form_answer_hardware()
+ 
+    function form_answer_hardware_line()
     {
-      // query is string like ":e1"
-      var query=document.getElementById("query_hardware").value;
-      var answer=document.getElementById("answer_hardware");
-      // answer from hardware
-      fetch("read?port="+query)
+      // query (port) is string like "1" or empty
+      var query=document.getElementById("query_hardware_line").value;
+      var answer=document.getElementById("answer_hardware_line");
+      // answer from hardware in string format
+      fetch("line?port="+query)
       .then(response => {return response.text();})
       .then(text => answer.innerHTML=text);
-      // answer is hex string like "=02AA10"
+      // answer is string like:
+      // "S1=2C3A02D0 T1=29.19 C RH1=40.20 % S2=2C3A1297 T2=28.74 C RH2=40.63 %"
     }
+
+    function update_html_from_json(json_str)
+    {
+      //json_str="{'serial1':123456,'t1':29.26,'rh1':40.06,'serial2':7890123,'t2':28.78,'rh2':40.56}";
+      var answer=document.getElementById("answer_hardware_json");
+      answer.innerHTML=json_str;
+      json_parsed=JSON.parse(json_str);
+      var serial1=document.getElementById("answer_hardware_serial1");
+      serial1.innerHTML=json_parsed.serial1;
+      var t1=document.getElementById("answer_hardware_t1");
+      t1.innerHTML=json_parsed.t1;
+    }
+
+    function form_answer_hardware_json()
+    {
+      // query (port) is string like "1" or empty
+      var query=document.getElementById("query_hardware_json").value;
+      var answer=document.getElementById("answer_hardware_json");
+      // answer from hardware in json format
+      fetch("json?port="+query)
+      .then(response => {return response.text();})
+      //.then(text => answer.innerHTML=text);
+      .then(text => {return update_html_from_json(text);});
+      // answer is string like:
+      // "{'serial1':123456,'t1':29.26,'rh1':40.06,'serial2':7890123,'t2':28.78,'rh2':40.56}"
+    }
+
 
     function form_answer_emulator()
     {
+      // query is string like ":e1"
       var query=document.getElementById("query_emulator").value;
       var answer=document.getElementById("answer_emulator");
       // answer from emulator
@@ -43,13 +72,23 @@
   <h1>THERMOHYGROMETER TH2</h1>
   <a href="index.html">Home</a>
   <h2>examples</h2>
-  <a href="read?port=1">http://host:port/read?port=1</a>
-  <h2>hardware</h2>
-  <form id="form_hardware" onsubmit="form_answer_hardware();return false">
-  <input type="text" name="query_hardware" id="query_hardware" value="1"/>
+  <a href="line">http://host/line</a><br/>
+  <a href="json">http://host/json</a><br/>
+  <a href="json?port=1">http://host/json?port=1</a>
+  <h2>hardware line</h2>
+  <form id="form_hardware_line" onsubmit="form_answer_hardware_line();return false">
+  <input type="text" name="query_hardware_line" id="query_hardware_line" value="1"/>
   <input type="submit" value="Submit">
   </form>
-  <p id="answer_hardware">answer</p>
+  <p id="answer_hardware_line">line</p>
+  <h2>hardware json</h2>
+  <form id="form_hardware_json" onsubmit="form_answer_hardware_json();return false">
+  <input type="text" name="query_hardware_json" id="query_hardware_json" value="1"/>
+  <input type="submit" value="Submit">
+  </form>
+  <p id="answer_hardware_json">json</p>
+  <p id="answer_hardware_serial1">serial1</p>
+  <p id="answer_hardware_t1">t1</p>
   <h2>emulator</h2>
   <form id="form_emulator" onsubmit="form_answer_emulator();return false">
   <input type="text" name="query_emulator" id="query_emulator" value=":e1"/>
