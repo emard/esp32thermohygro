@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>🟅 THERMOHYGRO</title>
+  <link rel="stylesheet" type="text/css" media="all" href="styles.css"/>
+  <script src="emulator.js"></script>
+  <script type="text/javascript">
+    // shorten typing: document.getElementById -> $id
+    function $id(id)
+    {
+      return document.getElementById(id);
+    }
+    
+    function form_answer_hardware()
+    {
+      // query is string like ":e1"
+      var query=document.getElementById("query_hardware").value;
+      var answer=document.getElementById("answer_hardware");
+      // answer from hardware
+      fetch("read?port="+query)
+      .then(response => {return response.text();})
+      .then(text => answer.innerHTML=text);
+      // answer is hex string like "=02AA10"
+    }
+
+    function form_answer_emulator()
+    {
+      var query=document.getElementById("query_emulator").value;
+      var answer=document.getElementById("answer_emulator");
+      // answer from emulator
+      answer.innerHTML=emulator(query);
+    }
+    
+    window.onload = function ()
+    {
+      // document.getElementById("example_form").addEventListener("submit", answer_form);
+      // answer_form();
+    }
+  </script>
+</head>
+<body>
+  <h1>THERMOHYGROMETER TH2</h1>
+  <a href="index.html">Home</a>
+  <h2>examples</h2>
+  <a href="read?port=1">http://host:port/read?port=1</a>
+  <h2>hardware</h2>
+  <form id="form_hardware" onsubmit="form_answer_hardware();return false">
+  <input type="text" name="query_hardware" id="query_hardware" value="1"/>
+  <input type="submit" value="Submit">
+  </form>
+  <p id="answer_hardware">answer</p>
+  <h2>emulator</h2>
+  <form id="form_emulator" onsubmit="form_answer_emulator();return false">
+  <input type="text" name="query_emulator" id="query_emulator" value=":e1"/>
+  <input type="submit" value="Submit">
+  </form>
+  <p id="answer_emulator">answer</p>
+</body>
+</html>
