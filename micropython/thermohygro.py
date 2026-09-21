@@ -1,3 +1,6 @@
+# simple reader app, low memory requirement
+# shows result on display and prints on USB serial
+# no web interface
 from sht75 import SHT75
 from sht85 import SHT85
 import ssd1306txt
