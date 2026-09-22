@@ -3,7 +3,7 @@ from time import sleep_ms
 from shtcrctab import crctable
 
 class SHT75:
-    def __init__(self, sck_pin, data_pin, chip_v=4):
+    def __init__(self, sck_pin, data_pin, chip_v=4, sleepms=sleep_ms):
         # V3 chip is identified by numerical 3 digit code
         # printed on sensor housing
         # V4 chip is identified by alphanumerical 3 digits/letters code
@@ -15,6 +15,7 @@ class SHT75:
         self.data = Pin(data_pin, mode=Pin.OPEN_DRAIN, pull=Pin.PULL_UP)
         self.data.value(1)
         self.sck.value(0)
+        self.sleepms=sleepms
 
     CMD_READ_TEMPERATURE=const(3)
     CMD_READ_HUMIDITY=const(5)
@@ -66,7 +67,7 @@ class SHT75:
     def _wait_for_conversion(self):
         timeout = 0
         while self.data.value() != 0:
-            sleep_ms(10)
+            self.sleepms(10)
             timeout += 10
             if timeout > 300:
                 if self.verbose:
@@ -102,7 +103,7 @@ class SHT75:
         self._send_command(cmd)
         self._wait_for_conversion()
         # Wait for measurement
-        #time.sleep_ms(320)
+        #self.sleepms(320)
         
         msb = self._read_byte(True)
         lsb = self._read_byte(True)
@@ -127,7 +128,7 @@ class SHT75:
         cmd=CMD_READ_HUMIDITY
         self._send_command(cmd)
         self._wait_for_conversion()
-        #time.sleep_ms(80)
+        #self.sleepms(80)
 
         msb = self._read_byte(True)
         lsb = self._read_byte(True)

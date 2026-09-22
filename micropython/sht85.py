@@ -10,8 +10,9 @@ MEASURE_CMD = b'\x24\x00'
 READ_SERIAL_CMD = b'\x36\x82'
 
 class SHT85:
-  def __init__(self, sck_pin:int, data_pin:int):
+  def __init__(self, sck_pin:int, data_pin:int, sleepms=sleep_ms):
     self.i2c=SoftI2C(scl=Pin(sck_pin), sda=Pin(data_pin), freq=100000)
+    self.sleepms=sleepms
 
   def detect(self)->bool:
     if SHT85_ADDR in self.i2c.scan():
@@ -29,7 +30,7 @@ class SHT85:
       self.i2c.writeto(SHT85_ADDR, READ_SERIAL_CMD)
     except:
       return 0
-    sleep_ms(1)
+    self.sleepms(1)
     try:
       data = self.i2c.readfrom(SHT85_ADDR, 6)
     except:
@@ -53,7 +54,7 @@ class SHT85:
       return -99.9, -99.9, serial_no
 
     # Wait for the measurement to complete (max ~15.5ms)
-    sleep_ms(20)
+    self.sleepms(20)
 
     # Read 6 bytes: Temp MSB, Temp LSB, Temp CRC, Hum MSB, Hum LSB, Hum CRC
     try:

@@ -106,10 +106,19 @@ table#directory_table
     tr:hover {background-color: #c5f5f5;}
 }
 */
-
+table
+{
+  border-collapse: collapse; /* Prevents double borders */
+  /* width: 100%; */ /* Optional: sets table width */
+}
+th, td
+{
+  border: 1px solid white; /* Sets border for table headers and cells */
+  padding: 3px; /* Adds space inside cells */
+  text-align: right; /* Aligns text to the right */
+}
 
 table tr:hover {background-color: #252565;}
-
 
 table tr td:nth-child(3):hover {
   background-color: #c599f5;

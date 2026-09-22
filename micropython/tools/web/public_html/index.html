@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>🟅 THERMOHYGRO</title>
+  <title>&#x2602;&#x1F321; THERMOHYGRO</title>
   <link rel="stylesheet" type="text/css" media="all" href="styles.css"/>
   <script src="emulator.js"></script>
   <script type="text/javascript">
@@ -31,10 +31,24 @@
       var answer=document.getElementById("answer_hardware_json");
       answer.innerHTML=json_str;
       json_parsed=JSON.parse(json_str);
+      //var json_date=document.getElementById("json_date");
+      //json_date.val(json_parsed.datetime.substring(0,10));
+      var measurement_date=document.getElementById("answer_hardware_date");
+      measurement_date.innerHTML=json_parsed.datetime.substring(0,10);
+      var measurement_time=document.getElementById("answer_hardware_time");
+      measurement_time.innerHTML=json_parsed.datetime.substring(11,19);
       var serial1=document.getElementById("answer_hardware_serial1");
-      serial1.innerHTML=json_parsed.serial1;
+      serial1.innerHTML=json_parsed.serial1.toString(16).toUpperCase();
       var t1=document.getElementById("answer_hardware_t1");
-      t1.innerHTML=json_parsed.t1;
+      t1.innerHTML=json_parsed.t1.toFixed(2);
+      var rh1=document.getElementById("answer_hardware_rh1");
+      rh1.innerHTML=json_parsed.rh1.toFixed(2);
+      var serial2=document.getElementById("answer_hardware_serial2");
+      serial2.innerHTML=json_parsed.serial2.toString(16).toUpperCase();
+      var t2=document.getElementById("answer_hardware_t2");
+      t2.innerHTML=json_parsed.t2.toFixed(2);
+      var rh2=document.getElementById("answer_hardware_rh2");
+      rh2.innerHTML=json_parsed.rh2.toFixed(2);
     }
 
     function form_answer_hardware_json()
@@ -87,8 +101,28 @@
   <input type="submit" value="Submit">
   </form>
   <p id="answer_hardware_json">json</p>
-  <p id="answer_hardware_serial1">serial1</p>
-  <p id="answer_hardware_t1">t1</p>
+  <table border="1">
+    <tr>
+      <th>DATE</th>
+      <th>TIME [UTC]</th>
+      <th>SERIAL1</th>
+      <th>RH1 [%]</th>
+      <th>T1 [&deg;C]</th>
+      <th>SERIAL2</th>
+      <th>RH2 [%]</th>
+      <th>T2 [&deg;C]</th>
+    </tr>
+    <tr>
+      <td id="answer_hardware_date">?</td>
+      <td id="answer_hardware_time">?</td>
+      <td id="answer_hardware_serial1">?</td>
+      <td id="answer_hardware_rh1">?</td>
+      <td id="answer_hardware_t1">?</td>
+      <td id="answer_hardware_serial2">?</td>
+      <td id="answer_hardware_rh2">?</td>
+      <td id="answer_hardware_t2">?</td>
+    </tr>
+  </table>
   <h2>emulator</h2>
   <form id="form_emulator" onsubmit="form_answer_emulator();return false">
   <input type="text" name="query_emulator" id="query_emulator" value=":e1"/>

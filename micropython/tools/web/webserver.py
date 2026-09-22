@@ -9,7 +9,11 @@ from microdot import *
 from sys import implementation
 from sht75 import SHT75
 from sht85 import SHT85
+from time import localtime
 import ssd1306txt
+import network
+import ntptime
+import wifipass
 
 sensor1_scl_pin=const(3)
 sensor1_sda_pin=const(4)
@@ -33,6 +37,16 @@ rh2=-99.9
 model2=""
 serial2=0
 readout=""
+
+def wificonnect():
+  global wifi
+  wifi=network.WLAN(network.STA_IF)
+  wifi.active(True)
+  #wifi.config(txpower=13)
+  wifi.connect(wifipass.USER, wifipass.PASS)
+  #print("show IP address:")
+  #print("webserver.wifi.ifconfig()")
+  #ntptime.settime() # call it when connected - error if no internet
 
 app=Microdot()
 Response.default_content_type='text/html'
@@ -63,7 +77,8 @@ async def index(request):
 @app.get('/json')
 async def index(request):
   #port=request.args['port'] # argument "port" value 1 given like http://host/json?port=1
-  answer='{"serial1":%d,"t1":%.2f,"rh1":%.2f,"serial2":%d,"t2":%.2f,"rh2":%.2f}' % (serial1,t1,rh1,serial2,t2,rh2)
+  answer='{"datetime":"%04d-%02d-%02dT%02d:%02d:%02dZ",' % localtime()[0:6]
+  answer+='"serial1":%d,"t1":%.2f,"rh1":%.2f,"serial2":%d,"t2":%.2f,"rh2":%.2f}' % (serial1,t1,rh1,serial2,t2,rh2)
   return answer
 
 # static files
@@ -83,6 +98,13 @@ async def loop_sensor_read():
     scl_pin=display_scl_pin,sda_pin=display_sda_pin,
     rst_pin=display_rst_pin,dc_pin=display_dc_pin,cs_pin=display_cs_pin)
   while True:
+    if localtime()[0]<2020:
+      if wifi.isconnected():
+        if wifi.ifconfig()[0]!="0.0.0.0":
+          try:
+            ntptime.settime()
+          except:
+            pass
     if t1<-99:
       model1="SHT85"
       sensor1=SHT85(sck_pin=sensor1_scl_pin, data_pin=sensor1_sda_pin)
@@ -103,7 +125,8 @@ async def loop_sensor_read():
     if t2<-99:
       model2=""
     ssd1306txt.thdisp(2,model2,t2,rh2,serial2)
-    readout="S1=%08X T1=%5.2f C RH1=%5.2f %% S2=%08X T2=%5.2f C RH2=%5.2f %% " % (serial1,t1,rh1,serial2,t2,rh2)
+    readout="%04d-%02d-%02dT%02d:%02d:%02dZ " % localtime()[0:6]
+    readout+="%s S1=%08X T1=%5.2f C RH1=%5.2f %% S2=%08X T2=%5.2f C RH2=%5.2f %%" % (wifi.ifconfig()[0],serial1,t1,rh1,serial2,t2,rh2,)
     print(readout)
     await asyncio.sleep(0.1)
 
@@ -112,4 +135,5 @@ async def main():
   await app.start_server(port=80,debug=False) # debug=True prints http requests
   await asyncio.sleep(0.010)
 
+wificonnect()
 asyncio.run(main())
