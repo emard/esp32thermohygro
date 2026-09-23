@@ -144,7 +144,7 @@ async def index(request):
   try:
     with open("thlogcfg.py","w") as cfgfile:
       try:
-        cfgfile.write("# list of UTC integer hours when to write log every day\n")
+        cfgfile.write("# comma separated list of integer hours [UTC] when to write log every day\n")
         cfgfile.write(f"loghours={str(hours_tuple)}\n")
       except:
         return "FAIL"

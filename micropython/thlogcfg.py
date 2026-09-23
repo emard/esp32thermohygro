@@ -1,2 +1,2 @@
-# list of UTC hours when to write log every day
-loghours=(7,12,)
+# comma separated list of integer hours [UTC] when to write log every day
+loghours=()
