@@ -67,9 +67,9 @@ class SHT75:
     def _wait_for_conversion(self):
         timeout = 0
         while self.data.value() != 0:
-            self.sleepms(10)
-            timeout += 10
-            if timeout > 300:
+            self.sleepms(20)
+            timeout += 20
+            if timeout > 320:
                 if self.verbose:
                   print("Sensor conversion timeout")
                 break
