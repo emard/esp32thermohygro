@@ -204,7 +204,7 @@ async def loop_sensor_read():
     print(readout)
     log2file()
     while local_time[5]==localtime()[5]: # wait until next second
-      await asyncio.sleep(0.5) # for SHT75 max 1 measurement per second
+      await asyncio.sleep(0.2) # for SHT75 max 1 measurement per second
 
 async def main():
   asyncio.create_task(loop_sensor_read())
