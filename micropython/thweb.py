@@ -28,10 +28,16 @@ serial2=0
 readout=""
 track_hour_before=-1
 
+def reset_wifi():
+  for a in (False, True):
+    wifi.active(a)
+    while wifi.active()!=a:
+      pass
+
 def wificonnect():
   global wifi
   wifi=network.WLAN(network.STA_IF)
-  wifi.active(True)
+  reset_wifi()
   #wifi.config(txpower=13)
   wifi.connect(thwificfg.USER, thwificfg.PASS)
   #print("show IP address:")
