@@ -36,6 +36,13 @@ def reset_wifi():
 
 def wificonnect():
   global wifi
+  if 1:
+    # temporary enter AP mode to reset wifi
+    # sometimes wifi is stubborn and won't connect even with this
+    wifi=network.WLAN(network.AP_IF)
+    reset_wifi()
+    wifi.config(channel=1, txpower=14, essid="TH2", password="PASS")
+    reset_wifi()
   wifi=network.WLAN(network.STA_IF)
   reset_wifi()
   #wifi.config(txpower=13)
