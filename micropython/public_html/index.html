@@ -201,11 +201,16 @@
   <input type="submit" value="READ">
   </form>
   <p id="answer_hardware_line">line</p>
-  <h2>examples</h2>
-  <a href="json">http://host/json (json format)</a><br/>
+  <h2>Low level usage</h2>
+  <p>
+  Web browsers without javascript will not automatically update sensos
+  readings.<br/>
+  To get raw readings without javascript:
+  </p>
+  <a href="json">http://host/json (json format. Ctrl-R to refresh)</a><br/>
   <a href="log">http://host/log (show log hours)</a><br/>
   <a href="log?hours=8,12">http://host/log?hours=8,12 (set log hours)</a><br/>
-  <a href="line">http://host/line (one-line format)</a><br/>
+  <a href="line">http://host/line (one-line format. Ctrl-R to refresh)</a><br/>
   <p>
 </body>
 </html>
