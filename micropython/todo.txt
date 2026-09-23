@@ -1,4 +1,5 @@
 [ ] on OLED show time, IP, WiFi signal strength
+[ ] from free bytes calculate max log date
 [x] function with a localtime condition to trigger logging
 [x] every new day resync ntptime
 [x] log without parameter returs current log hours tuple
