@@ -176,6 +176,7 @@ async def loop_sensor_read():
             ntptime.settime()
           except:
             pass
+    local_time=localtime()
     if t1<-99:
       model1="SHT85"
       sensor1=SHT85(sck_pin=thpinout.sensor1_scl_pin, data_pin=thpinout.sensor1_sda_pin)
@@ -196,12 +197,13 @@ async def loop_sensor_read():
     if t2<-99:
       model2=""
     ssd1306txt.thdisp(2,model2,t2,rh2,serial2)
-    readout="%04d-%02d-%02dT%02d:%02d:%02dZ " % localtime()[0:6]
+    readout="%04d-%02d-%02dT%02d:%02d:%02dZ " % local_time[0:6]
     readout+="%s S1=%08X T1=%5.2f C RH1=%5.2f %% S2=%08X T2=%5.2f C RH2=%5.2f %% " % (wifi.ifconfig()[0],serial1,t1,rh1,serial2,t2,rh2,)
     readout+="FREE=%d bytes" % (storagefree(),)
     print(readout)
     log2file()
-    await asyncio.sleep(0.1)
+    while local_time[5]==localtime()[5]: # wait until next second
+      await asyncio.sleep(0.5) # for SHT75 max 1 measurement per second
 
 async def main():
   asyncio.create_task(loop_sensor_read())

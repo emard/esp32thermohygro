@@ -97,6 +97,9 @@ class SHT75:
         status = self._read_byte(True)
         crc = self._read_byte(False)
 
+        if status==255: # sensor not connected
+          return -99.9,-99.9,0
+
         # Read Temperature
         # 0x03 is the command for reading Temperature
         cmd=CMD_READ_TEMPERATURE
