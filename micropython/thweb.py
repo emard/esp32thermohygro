@@ -3,8 +3,9 @@
 # shows data on display and provides web interface
 
 # installation quick notes
-# wget https://raw.githubusercontent.com/miguelgrinberg/microdot/refs/heads/main/src/microdot/microdot.py -O microdot.py
-# mpremote cp microdot.py :/lib/
+# mkdir -p lib
+# wget https://raw.githubusercontent.com/miguelgrinberg/microdot/refs/heads/main/src/microdot/microdot.py -O lib/microdot.py
+# mpremote cp lib/microdot.py :/lib/
 # mpremote cp -r *.py public_html :/
 from microdot import *
 from sys import implementation
