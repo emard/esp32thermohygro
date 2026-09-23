@@ -12,6 +12,35 @@
       return document.getElementById(id);
     }
  
+    function form_answer_get_log_hours()
+    {
+      // query (port) is string like "1" or empty
+      var inputfield=document.getElementById("query_hardware_log");
+      // answer from hardware in string format
+      fetch("log")
+      .then(response => {return response.text();})
+      .then(text => inputfield.value=text);
+      // answer is string like:
+      // "1, 3, 5"
+      // or
+      // "FAIL"
+    }
+
+    function form_answer_set_log_hours()
+    {
+      // query (port) is string like "1" or empty
+      var inputfield=document.getElementById("query_hardware_log");
+      var answer=document.getElementById("answer_hardware_log");
+      // answer from hardware in string format
+      fetch("log?hours="+inputfield.value)
+      .then(response => {return response.text();})
+      .then(text => inputfield.value=text);
+      // answer is string like:
+      // "1, 3, 5"
+      // or
+      // "FAIL"
+    }
+
     function form_answer_hardware_line()
     {
       // query (port) is string like "1" or empty
@@ -29,7 +58,7 @@
     {
       //json_str="{'serial1':123456,'t1':29.26,'rh1':40.06,'serial2':7890123,'t2':28.78,'rh2':40.56}";
       var answer=document.getElementById("answer_hardware_json");
-      answer.innerHTML=json_str;
+      //answer.innerHTML=json_str; // show json for debug
       json_parsed=JSON.parse(json_str);
       //var json_date=document.getElementById("json_date");
       //json_date.val(json_parsed.datetime.substring(0,10));
@@ -49,15 +78,17 @@
       t2.innerHTML=json_parsed.t2.toFixed(2);
       var rh2=document.getElementById("answer_hardware_rh2");
       rh2.innerHTML=json_parsed.rh2.toFixed(2);
+      var diskfree=document.getElementById("answer_hardware_free");
+      diskfree.innerHTML=json_parsed.free;
     }
 
     function form_answer_hardware_json()
     {
       // query (port) is string like "1" or empty
-      var query=document.getElementById("query_hardware_json").value;
+      //var query=document.getElementById("query_hardware_json").value;
       var answer=document.getElementById("answer_hardware_json");
       // answer from hardware in json format
-      fetch("json?port="+query)
+      fetch("json")
       .then(response => {return response.text();})
       //.then(text => answer.innerHTML=text);
       .then(text => {return update_html_from_json(text);});
@@ -75,31 +106,48 @@
       answer.innerHTML=emulator(query);
     }
     
+    function getTimeUntilNextMinute()
+    {
+      const now = new Date();
+      //const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const milliseconds = now.getMilliseconds();
+      // If exactly on the minute, run immediately (delay = 0)
+      if (seconds === 0 && milliseconds === 0) {
+        return 0;
+      }
+      // Calculate time until next minute (in ms)
+      return (60-seconds)*1000 - milliseconds;
+    }
+ 
+    function runAtEveryFullMinute(callback) {
+      // Calculate delay until next full hour
+      const initialDelay = getTimeUntilNextMinute();
+ 
+      // Run once at the next full minute
+      setTimeout(() => {
+        // Execute the callback
+        callback();
+        // Schedule subsequent runs every minute
+        setInterval(callback, 60*1000); // 1 minute = 60000 ms
+      }, initialDelay);
+    }
+
     window.onload = function ()
     {
       // document.getElementById("example_form").addEventListener("submit", answer_form);
       // answer_form();
+      form_answer_hardware_json(); // execute immediately after page load
+      //setInterval(form_answer_hardware_json, 60*1000); // peridically execute in minute intervals
+      runAtEveryFullMinute(form_answer_hardware_json);
+      form_answer_get_log_hours();
     }
   </script>
 </head>
 <body>
-  <h1>THERMOHYGROMETER TH2</h1>
+  <h1>THERMOHYGROMETER &#x2602;&#x1F321; TH2</h1>
   <a href="index.html">Home</a>
-  <h2>examples</h2>
-  <a href="line">http://host/line</a><br/>
-  <a href="json">http://host/json</a><br/>
-  <a href="json?port=1">http://host/json?port=1</a>
-  <h2>hardware line</h2>
-  <form id="form_hardware_line" onsubmit="form_answer_hardware_line();return false">
-  <input type="text" name="query_hardware_line" id="query_hardware_line" value="1"/>
-  <input type="submit" value="Submit">
-  </form>
-  <p id="answer_hardware_line">line</p>
-  <h2>hardware json</h2>
-  <form id="form_hardware_json" onsubmit="form_answer_hardware_json();return false">
-  <input type="text" name="query_hardware_json" id="query_hardware_json" value="1"/>
-  <input type="submit" value="Submit">
-  </form>
+  <h2>sensor reading (json)</h2>
   <p id="answer_hardware_json">json</p>
   <table border="1">
     <tr>
@@ -111,6 +159,7 @@
       <th>SERIAL2</th>
       <th>RH2 [%]</th>
       <th>T2 [&deg;C]</th>
+      <th>FREE [bytes]</th>
     </tr>
     <tr>
       <td id="answer_hardware_date">?</td>
@@ -121,13 +170,38 @@
       <td id="answer_hardware_serial2">?</td>
       <td id="answer_hardware_rh2">?</td>
       <td id="answer_hardware_t2">?</td>
+      <td id="answer_hardware_free">?</td>
     </tr>
   </table>
-  <h2>emulator</h2>
-  <form id="form_emulator" onsubmit="form_answer_emulator();return false">
-  <input type="text" name="query_emulator" id="query_emulator" value=":e1"/>
-  <input type="submit" value="Submit">
+  <br/>
+  download <a href="thlog.csv" download>thlog.csv</a><br/>
+  at spreadsheet csv import window, select:<br/>
+  <table>
+    <tr><th>Option</th><th>Value</th></tr>
+    <tr><td>Charset:</td><td>Unicode (UTF-8)</td></tr>
+    <tr><td>Language:</td><td>English (USA)</td></tr>
+    <tr><td>From row:</td><td>1</td></tr>
+    <tr><td>Delimiter:</td><td>Detected (space)</td></tr>
+  </table>
+  </p>
+  <h2>set log hours</h2>
+  <p>comma separated list of integer hours [UTC] when to log every day</p>
+  <form id="form_hardware_log" onsubmit="form_answer_set_log_hours();return false">
+  <input type="text" name="query_hardware_log" id="query_hardware_log" value="?"/>
+  <input type="submit" value="SET">
   </form>
-  <p id="answer_emulator">answer</p>
+  <p id="answer_hardware_log"></p>
+  <h2>sensor reading (line)</h2>
+  <form id="form_hardware_line" onsubmit="form_answer_hardware_line();return false">
+  <input type="text" name="query_hardware_line" id="query_hardware_line" value=""/>
+  <input type="submit" value="READ">
+  </form>
+  <p id="answer_hardware_line">line</p>
+  <h2>examples</h2>
+  <a href="json">http://host/json (json format)</a><br/>
+  <a href="log">http://host/log (show log hours)</a><br/>
+  <a href="log?hours=8,12">http://host/log?hours=8,12 (set log hours)</a><br/>
+  <a href="line">http://host/line (one-line format)</a><br/>
+  <p>
 </body>
 </html>

@@ -1,0 +1,12 @@
+sensor1_scl_pin=const(3)
+sensor1_sda_pin=const(4)
+sensor2_scl_pin=const(1)
+sensor2_sda_pin=const(2)
+
+display_width=const(128)
+display_height=const(64)
+display_scl_pin=const(7)
+display_sda_pin=const(8)
+display_rst_pin=const(9)
+display_dc_pin=const(6)
+display_cs_pin=const(5)
