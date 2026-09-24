@@ -15,7 +15,7 @@ from time import localtime
 import os,network,ntptime
 import thpinout,thwificfg,thlogcfg,ssd1306txt
 
-logfile="/public_html/thlog.csv"
+logfilef="/public_html/thlog%04d.csv"
 
 t1=-99.9
 rh1=-99.9
@@ -92,6 +92,7 @@ def log2file():
   # if log basis is daily, it is executed every hour
   if basis_now not in thlogcfg.events:
     return
+  logfile=logfilef % (time_now[0],) # year in filename
   # this code is executed on log list
   track_basis_before=basis_now # prevents double log at same hour
   try:
@@ -158,10 +159,18 @@ async def index(request):
   #  answer+='"serial1":%d,"t1":%.2f,"rh1":%.2f,"serial2":%d,"t2":%.2f,"rh2":%.2f}' % (serial1,t1,rh1,serial2,t2,rh2)
   return answer
 
+# array of strings with log files
+def logfiles():
+  logfilez=[]
+  for filename in os.listdir("/public_html"):
+    if filename.startswith("thlog"):
+      logfilez.append(filename)
+  return str(logfilez).replace("'",'"') # BUG if any filename contains " or '
+
 # returns log status as JSON string
 def logstatus()->str:
   logevents=str(thlogcfg.events)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
-  return '{"basis":%d,"events":"%s"}' % (thlogcfg.basis,logevents) # json
+  return '{"basis":%d,"events":"%s","files":%s}' % (thlogcfg.basis,logevents,logfiles()) # json
 
 # reads/sets integer hours [UTC] in a day when to log
 # http://host/log
