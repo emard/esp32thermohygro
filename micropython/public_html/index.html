@@ -12,6 +12,48 @@
       return document.getElementById(id);
     }
 
+    function add_log_download_link(filename)
+    {
+      // \D matches a character that is not a numerical digit.
+      // So any non digit is replaced by an empty string.
+      // The result is only the digits in a string.
+      var year=filename.replace(/\D/g, "");
+      var temp_link = document.createElement("a");
+
+      temp_link.href = filename;
+      temp_link.innerHTML = year;
+
+      const textnode = document.createTextNode(" ");
+
+      //var par = document.createElement("p");
+      //par.appendChild(temp_link);
+      // TODO when year mod 10 = 9 then add <br/> node
+      // every year ending with 9 should have newline
+
+      document.getElementById("download_list").appendChild(temp_link);
+      document.getElementById("download_list").appendChild(textnode);
+    }
+
+    function log_files_fill_html(json_str)
+    {
+      var json_parsed=JSON.parse(json_str);
+      for(const filename of json_parsed.files)
+        add_log_download_link(filename);
+    }
+
+    function get_log_files()
+    {
+      // answer from hardware in string format
+      //log_fill_html('{"basis":3,"events":"3,4,8"}');
+      fetch("log")
+      .then(response => {return response.text();})
+      .then(text => {log_files_fill_html(text);});
+      // text answer is json string like:
+      // {basis:3,"events":"1, 3, 5","files":["thlog2026.csv","thlog2027.csv"]}
+      // or
+      // "FAIL"
+    }
+
     function log_fill_html(json_str)
     {
       var json_parsed=JSON.parse(json_str);
@@ -21,6 +63,7 @@
       var inputfield_logevents=document.getElementById("logevents");
       inputfield_logevents.value=json_parsed.events;
       //inputfield_logevents.value="3,4,5";
+      add_log_download_links(json_parsed.files);
     }
 
     function form_answer_get_log_events()
@@ -106,7 +149,6 @@
       // "{'serial1':123456,'t1':29.26,'rh1':40.06,'serial2':7890123,'t2':28.78,'rh2':40.56}"
     }
 
-
     function form_answer_emulator()
     {
       // query is string like ":e1"
@@ -153,6 +195,9 @@
       form_answer_get_log_events();
       //log_fill_html("1");
       //log_fill_html('{"basis":4,"events":"1,2,3,4,8"}');
+      //add_log_download_link("thlog2025.csv");
+      //add_log_download_link("thlog2026.csv");
+      get_log_files();
     }
   </script>
 </head>
@@ -186,8 +231,7 @@
     </tr>
   </table>
   <br/>
-  <p>
-  download <a href="thlog.csv" download>thlog.csv</a>
+  <p id="download_list"></p>
   </p>
   <p>
   at spreadsheet csv import window, select:<br/>

@@ -92,6 +92,10 @@ def log2file():
   # if log basis is daily, it is executed every hour
   if basis_now not in thlogcfg.events:
     return
+  # if less than 16K free, delete oldest file
+  #if storagefree()<16384:
+  if storagefree()<6000000:
+    os.remove(logfiles()[0])
   logfile=logfilef % (time_now[0],) # year in filename
   # this code is executed on log list
   track_basis_before=basis_now # prevents double log at same hour
@@ -165,6 +169,7 @@ def logfiles():
   for filename in os.listdir("/public_html"):
     if filename.startswith("thlog"):
       logfilez.append(filename)
+  logfilez.sort()
   return str(logfilez).replace("'",'"') # BUG if any filename contains " or '
 
 # returns log status as JSON string
