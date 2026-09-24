@@ -149,7 +149,7 @@ async def index(request):
     hours_str=request.args['hours'].strip().strip(",") # argument "hours" given like http://host/log?hours=2,5,12
   except:
     # without argument returs existing log setting
-    return str(thlogcfg.loghours)[1:-1] # tuple without brackets
+    return str(thlogcfg.loghours)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
   if hours_str=="":
     hours_tuple=()
   else:
@@ -164,7 +164,7 @@ async def index(request):
         return "FAIL"
   except:
     pass
-  return str(thlogcfg.loghours)[1:-1] # tuple without brackets
+  return str(thlogcfg.loghours)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
 
 # static files
 @app.route('<path:path>')
