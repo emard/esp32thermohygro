@@ -4,9 +4,12 @@
 [x] every new day resync ntptime
 [x] log without parameter returs current log hours tuple
 [x] sht75 max 1 measurement per second
-[ ] after log file is created, header is added but need to add first log line
-[ ] yearly log
-[ ] on low storage free delete latest log year
-[ ] web: report log files of all years
-[ ] delete one year of log answering a*b question
-[ ] log should return json {"basis":3, list:"1,2,3"}
+[x] after log file is created, header is added but need to add first log line
+[x] yearly log file
+[x] on low storage free delete fist log year
+[x] thweb.py: report log files of all years
+[ ] delete one year of log after correctly answering a*b question
+[x] log should return json {"basis":3, list:"1,2,3"}
+[x] remove minutely log, as it localtime may skip partical second of a minute
+[ ] on web log time is displayed as 14:12:59, done too early or esp32 rtc is late
+[ ] year ending with 9 in javascript should have <br/> newline

@@ -79,6 +79,25 @@ def daily_ntp_sync(hour_now:int,hour_sync:int):
           except:
             pass
 
+# array of strings with log files
+def logfiles():
+  logfilez=[]
+  for filename in os.listdir("/public_html"):
+    if filename.startswith("thlog"):
+      logfilez.append(filename)
+  logfilez.sort()
+  return logfilez
+
+def logfiles_str():
+  return str(logfiles()).replace("'",'"') # BUG if any filename contains " or '
+
+# remove oldest logs until minfree bytes
+def remove_old_log(minfree=65536):
+  for file in logfiles():
+    if storagefree()>=minfree:
+      return
+    os.unlink("/public_html/"+file)
+
 def log2file():
   global track_basis_before
   time_now=localtime() # sample time now
@@ -92,10 +111,8 @@ def log2file():
   # if log basis is daily, it is executed every hour
   if basis_now not in thlogcfg.events:
     return
-  # if less than 16K free, delete oldest file
-  #if storagefree()<16384:
-  if storagefree()<6000000:
-    os.remove(logfiles()[0])
+  # delete oldest log file(s) until 64K is free
+  remove_old_log()
   logfile=logfilef % (time_now[0],) # year in filename
   # this code is executed on log list
   track_basis_before=basis_now # prevents double log at same hour
@@ -163,19 +180,10 @@ async def index(request):
   #  answer+='"serial1":%d,"t1":%.2f,"rh1":%.2f,"serial2":%d,"t2":%.2f,"rh2":%.2f}' % (serial1,t1,rh1,serial2,t2,rh2)
   return answer
 
-# array of strings with log files
-def logfiles():
-  logfilez=[]
-  for filename in os.listdir("/public_html"):
-    if filename.startswith("thlog"):
-      logfilez.append(filename)
-  logfilez.sort()
-  return str(logfilez).replace("'",'"') # BUG if any filename contains " or '
-
 # returns log status as JSON string
 def logstatus()->str:
   logevents=str(thlogcfg.events)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
-  return '{"basis":%d,"events":"%s","files":%s}' % (thlogcfg.basis,logevents,logfiles()) # json
+  return '{"basis":%d,"events":"%s","files":%s}' % (thlogcfg.basis,logevents,logfiles_str()) # json
 
 # reads/sets integer hours [UTC] in a day when to log
 # http://host/log
