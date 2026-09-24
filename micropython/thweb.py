@@ -26,7 +26,9 @@ rh2=-99.9
 model2=""
 serial2=0
 readout=""
-track_hour_before=-1
+track_basis_before=-1 # initial negative value is always different than any actual value
+track_hours_before=-1 # initial negative value is always different than any actual value
+log_basis=5 # 3:daily 4:hourly 5:minutely
 
 def reset_wifi():
   for a in (False, True):
@@ -56,25 +58,42 @@ def storagefree()->int:
   stat=os.statvfs("/")
   return stat[0]*stat[3]
 
+def logline()->str:
+  # datetime,ip,serial1,t1,rh1,serial2,t2,rh2
+  line='"%04d-%02d-%02d %02d:%02d:%02d" ' % localtime()[0:6]
+  line+=f"{wifi.ifconfig()[0]} "
+  line+=f"{serial1:08X} {t1:.2f} {rh1:.2f} {serial2:08X} {t2:.2f} {rh2:.2f}\n"
+  return line
+
+def daily_ntp_sync(hour_now:int,hour_sync:int):
+  global track_hours_before
+  # this code is executed on daily basis to sync clock with NTP
+  if hour_now!=track_hours_before:
+    track_hours_before=hour_now
+    if hour_now==hour_sync: # daily at 4 o'clock
+      # at 04:00 resync time with ntp
+      if wifi.isconnected():
+        if wifi.ifconfig()[0]!="0.0.0.0":
+          try:
+            ntptime.settime()
+          except:
+            pass
+
 def log2file():
-  global track_hour_before
+  global track_basis_before
   time_now=localtime() # sample time now
-  hour_now=time_now[3] # 3 is integer hour, 4 is integer minute
-  if time_now[0]<2020 or hour_now==track_hour_before:
+  basis_now=time_now[thlogcfg.basis] # 3:daily, 4:hourly, 5:minutely
+  if time_now[0]<2020: # clock is not synchronized (usually 2000)
     return
-  # this code is executed every hour
-  if hour_now==4:
-    # at 04:00 resync time with ntp
-    if wifi.isconnected():
-      if wifi.ifconfig()[0]!="0.0.0.0":
-        try:
-          ntptime.settime()
-        except:
-          pass
-  if hour_now not in thlogcfg.loghours:
+  daily_ntp_sync(time_now[3],4) # sync every day at 4 o'clock UTC
+  if basis_now==track_basis_before:
     return
-  # triggers log at start of a new hour
-  track_hour_before=hour_now # prevents double log at same hour
+  # this code is executed on log basis
+  # if log basis is daily, it is executed every hour
+  if basis_now not in thlogcfg.events:
+    return
+  # this code is executed on log list
+  track_basis_before=basis_now # prevents double log at same hour
   try:
     with open(logfile, "r") as file:
       #print(f"File {logfile} exists and can be read.")
@@ -82,12 +101,9 @@ def log2file():
       with open(logfile, "a") as file:
         #print(f"File {logfile} exists and can be appended.")
         try:
-          # datetime,ip,serial1,t1,rh1,serial2,t2,rh2
-          logline='"%04d-%02d-%02d %02d:%02d:%02d" ' % time_now[0:6]
-          logline+=f"{wifi.ifconfig()[0]} "
-          logline+=f"{serial1:08X} {t1:.2f} {rh1:.2f} {serial2:08X} {t2:.2f} {rh2:.2f}\n"
-          file.write(logline)
+          file.write(logline())
           #print(f"Appending to {logfile} successful.")      
+          file.close()
         except:
           #print(f"Appending to {logfile} failed.")      
           pass
@@ -99,7 +115,9 @@ def log2file():
         # write first 2 lines as the file header
         file.write('"DATETIME" "ADDR" "SERIAL1" "T1" "RH1" "SERIAL2" "T2" "RH2"\n')
         file.write('"[UTC]" "[IP]" "[HEX]" "[°C]" "[%]" "[HEX]" "[°C]" "[%]"\n')
+        file.write(logline())
         #print(f"File {logfile} created.")
+        file.close()
     except:
       #print(f"Create {logfile} failed.")
       pass
@@ -140,31 +158,50 @@ async def index(request):
   #  answer+='"serial1":%d,"t1":%.2f,"rh1":%.2f,"serial2":%d,"t2":%.2f,"rh2":%.2f}' % (serial1,t1,rh1,serial2,t2,rh2)
   return answer
 
+# returns log status as JSON string
+def logstatus()->str:
+  logevents=str(thlogcfg.events)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
+  return '{"basis":%d,"events":"%s"}' % (thlogcfg.basis,logevents) # json
+
 # reads/sets integer hours [UTC] in a day when to log
 # http://host/log
-# http://host/log?hours=5,8,10
+# http://host/log?basis=3&list=5,8,10
 @app.get('/log')
 async def index(request):
   try:
-    hours_str=request.args['hours'].strip().strip(",") # argument "hours" given like http://host/log?hours=2,5,12
+    basis_str=request.args['basis'].strip().strip(",") # argument "list" given like http://host/log?list=2,5,12
   except:
-    # without argument returs existing log setting
-    return str(thlogcfg.loghours)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
-  if hours_str=="":
-    hours_tuple=()
+    basis_str=""
+  try:
+    list_str=request.args['events'].strip().strip(",") # argument "list" given like http://host/log?list=2,5,12
+  except:
+    list_str=""
+  if basis_str=="" and list_str=="":
+    return logstatus()
+  if basis_str=="":
+    basis_int=3 # default is logging on daily basis
   else:
-    hours_tuple=tuple(map(int,hours_str.split(',')))
-  thlogcfg.loghours=hours_tuple
+    basis_int=int(basis_str)
+  if list_str=="":
+    list_tuple=()
+  else:
+    list_tuple=tuple(map(int,list_str.split(',')))
+  thlogcfg.basis=basis_int
+  thlogcfg.events=list_tuple
   try:
     with open("thlogcfg.py","w") as cfgfile:
       try:
-        cfgfile.write("# comma separated list of integer hours [UTC] when to write log every day\n")
-        cfgfile.write(f"loghours={str(hours_tuple)}\n")
+        cfgfile.write("# log basis 1:yearly 2:monthly 3:daily 4:hourly 5:minutely\n")
+        cfgfile.write(f"basis={basis_int}\n")
+        cfgfile.write("# when to write log\n")
+        cfgfile.write("# hours are in UTC (GMT) time zone\n")
+        cfgfile.write("# comma separated list of integer sub-basis months/days/hours/minutes/econds\n")
+        cfgfile.write(f"events={str(list_tuple)}\n")
       except:
         return "FAIL"
   except:
     pass
-  return str(thlogcfg.loghours)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
+  return logstatus()
 
 # static files
 @app.route('<path:path>')

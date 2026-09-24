@@ -4,3 +4,9 @@
 [x] every new day resync ntptime
 [x] log without parameter returs current log hours tuple
 [x] sht75 max 1 measurement per second
+[ ] after log file is created, header is added but need to add first log line
+[ ] yearly log
+[ ] on low storage free delete latest log year
+[ ] web: report log files of all years
+[ ] delete one year of log answering a*b question
+[ ] log should return json {"basis":3, list:"1,2,3"}
