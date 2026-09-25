@@ -159,7 +159,7 @@ async def index(request):
 
 # request and response example:
 # simple readout in one line, the same as printed on USB serial
-# http://host/read
+# http://host/line
 # S1=2C3A02D0 T1=28.79 C RH1=41.06 % S2=2C3A1297 T2=28.50 C RH2=41.18 %
 @app.get('/line')
 async def index(request):
@@ -168,9 +168,9 @@ async def index(request):
 
 # request and response example:
 # readout in json format
-# http://host/json
+# http://host/read
 # {'serial1':0x1234,'t1':'28.03','rh1':'30.25'}
-@app.get('/json')
+@app.get('/read')
 async def index(request):
   #port=request.args['port'] # argument "port" value 1 given like http://host/json?port=1
   answer='{"datetime":"%04d-%02d-%02dT%02d:%02d:%02dZ",' % localtime()[0:6]
