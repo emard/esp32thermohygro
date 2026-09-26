@@ -26,9 +26,13 @@
   <p>
   <a href="read">http://host/read (json format. Ctrl-R to refresh)</a><br/>
   {"datetime":"2026-09-25T07:58:09Z","serial1":742003351,"t1":22.88,"rh1":45.28,"serial2":0,"t2":-99.90,"rh2":-99.90,"free":3952640}<br/>
+  <br/>
   <a href="log">http://host/log (show log setting)</a><br/>
   {"basis":4,"events":"0, 15, 30, 45","files":["thlog2026.csv"]}<br/>
+  <br/>
   <a href="log?basis=3&events=8,12">http://host/log?basis=3&amp;events=8,12 (set log on daily basis, hours events)</a><br/>
+  {"basis":3,"events":"8, 12","files":["thlog2026.csv"]}<br/>
+  <br/>
   <a href="line">http://host/line (one-line format. Ctrl-R to refresh)</a><br/>
   2026-09-25T07:59:40Z 192.168.145.248 S1=2C3A1297 T1=22.87 C RH1=45.25 % S2=00000000 T2=-99.90 C RH2=-99.90 % FREE=3952640 bytes<br/>
   <p>
