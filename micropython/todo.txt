@@ -12,4 +12,7 @@
 [x] log should return json {"basis":3, list:"1,2,3"}
 [x] remove minutely log, as it localtime may skip partical second of a minute
 [ ] on web log time is displayed as 14:12:59, done too early or esp32 rtc is late
-[ ] year ending with 9 in javascript should have <br/> newline
+[x] javascript: in download list, year that endsWith("9") should add <br/> newline
+[x] help.html page
+[x] feedback (OK,FAIL) at setting log events
+[ ] input field for hostname

@@ -31,6 +31,11 @@
 
       document.getElementById("download_list").appendChild(temp_link);
       document.getElementById("download_list").appendChild(textnode);
+      if(year.endsWith("9"))
+      {
+        var newline=document.createElement("br");
+        document.getElementById("download_list").appendChild(newline);
+      }
     }
 
     function log_files_fill_html(json_str)
