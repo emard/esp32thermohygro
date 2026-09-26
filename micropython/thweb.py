@@ -13,7 +13,7 @@ from sht75 import SHT75
 from sht85 import SHT85
 from time import localtime
 import os,network,ntptime
-import thpinout,thwificfg,thlogcfg,ssd1306txt
+import thpinout,thwificfg,thlogcfg,thname,ssd1306txt
 
 logfilef="/public_html/thlog%04d.csv"
 
@@ -47,7 +47,7 @@ def wificonnect():
     reset_wifi()
   wifi=network.WLAN(network.STA_IF)
   reset_wifi()
-  #wifi.config(txpower=13)
+  wifi.config(dhcp_hostname=thname.HOSTNAME)
   wifi.connect(thwificfg.USER, thwificfg.PASS)
   #print("show IP address:")
   #print("webserver.wifi.ifconfig()")
