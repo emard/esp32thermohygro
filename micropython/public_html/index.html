@@ -214,6 +214,15 @@
   <a href="index.html">Home</a>
   <a href="help.html">Help</a>
   </p>
+  <form id="form_set_hostname" onsubmit="form_set_hostname();return false">
+  <b>hostname:</b>
+  <input type="text" name="hostname" id="hostname"
+  pattern="[a-zA-Z0-9][a-zA-Z0-9\-]+[a-zA-Z0-9]"
+  maxlength="63" value="TH2"/>
+  <input type="submit" value="SET">
+  <b id="set_hostname_response">OK</b>
+  </form>
+  <br/>
   <table border="1">
     <tr>
       <th>DATE</th>
@@ -258,7 +267,6 @@
   Comma (,) separated list of log events.<br/>
   Daily, Hours: in UTC (GMT) time zone.
   </p>
-  <p>
   <form id="form_hardware_log" onsubmit="form_answer_set_log_events();return false">
   <select id="logbasis" name="logbasis">
     <option value="1">Yearly, Months:</option>
@@ -270,7 +278,6 @@
   <input type="submit" value="SET">
   <b id="set_logevents_response">OK</b>
   </form>
-  </p>
   <p id="answer_hardware_log"></p>
   <h2>sensor reading (line)</h2>
   <form id="form_hardware_line" onsubmit="form_answer_hardware_line();return false">
