@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>&#x1F321;&#x2602; THERMOHYGRO</title>
   <link rel="stylesheet" type="text/css" media="all" href="styles.css"/>
-  <script src="emulator.js"></script>
   <script type="text/javascript">
     // shorten typing: document.getElementById -> $id
     function $id(id)
@@ -63,7 +62,8 @@
       var inputfield_logevents=document.getElementById("logevents");
       inputfield_logevents.value=json_parsed.events;
       //inputfield_logevents.value="3,4,5";
-      add_log_download_links(json_parsed.files);
+      var set_logevents_response=document.getElementById("set_logevents_response");
+      set_logevents_response.innerHTML="OK";
     }
 
     function form_answer_get_log_events()
@@ -82,6 +82,8 @@
     function form_answer_set_log_events()
     {
       // query (port) is string like "1" or empty
+      var set_logevents_response=document.getElementById("set_logevents_response");
+      set_logevents_response.innerHTML="WAIT";
       var inputfield_logbasis=document.getElementById("logbasis");
       var inputfield_logevents=document.getElementById("logevents");
       // answer from hardware in string format
@@ -205,6 +207,7 @@
   <h1>THERMOHYGROMETER TH2 &#x1F321;&#x2602;</h1>
   <p>
   <a href="index.html">Home</a>
+  <a href="help.html">Help</a>
   </p>
   <table border="1">
     <tr>
@@ -231,6 +234,7 @@
     </tr>
   </table>
   <br/>
+  <h2>Download</h2>
   <p id="download_list"></p>
   </p>
   <p>
@@ -249,6 +253,7 @@
   Comma (,) separated list of log events.<br/>
   Daily basis: Hours events are in UTC (GMT) time zone.
   </p>
+  <p>
   <form id="form_hardware_log" onsubmit="form_answer_set_log_events();return false">
   <select id="logbasis" name="logbasis">
     <option value="1">Yearly, Months:</option>
@@ -256,29 +261,17 @@
     <option value="3" selected>Daily, Hours:</option>
     <option value="4">Hourly, Minutes:</option>
   </select>
-  <input type="text" name="logevents" id="logevents" value="?"/>
+  <input type="text" name="logevents" id="logevents" value="?" pattern="[0-9, ]*"/>
   <input type="submit" value="SET">
+  <b id="set_logevents_response">OK</b>
   </form>
+  </p>
   <p id="answer_hardware_log"></p>
   <h2>sensor reading (line)</h2>
   <form id="form_hardware_line" onsubmit="form_answer_hardware_line();return false">
-  <input type="text" name="query_hardware_line" id="query_hardware_line" value=""/>
+  <input type="text" name="query_hardware_line" id="query_hardware_line" value="" disabled/>
   <input type="submit" value="READ">
   </form>
   <p id="answer_hardware_line">line</p>
-  <h2>Low level usage</h2>
-  <p>
-  Web browsers without javascript will not automatically update sensos
-  readings.<br/>
-  To get raw readings without javascript:
-  </p>
-  <a href="read">http://host/read (json format. Ctrl-R to refresh)</a><br/>
-  {"datetime":"2026-09-25T07:58:09Z","serial1":742003351,"t1":22.88,"rh1":45.28,"serial2":0,"t2":-99.90,"rh2":-99.90,"free":3952640}<br/>
-  <a href="log">http://host/log (show log setting)</a><br/>
-  {"basis":4,"events":"0, 15, 30, 45","files":["thlog2026.csv"]}<br/>
-  <a href="log?basis=3&events=8,12">http://host/log?basis=3&amp;events=8,12 (set log on daily basis, hours events)</a><br/>
-  <a href="line">http://host/line (one-line format. Ctrl-R to refresh)</a><br/>
-  2026-09-25T07:59:40Z 192.168.145.248 S1=2C3A1297 T1=22.87 C RH1=45.25 % S2=00000000 T2=-99.90 C RH2=-99.90 % FREE=3952640 bytes<br/>
-  <p>
 </body>
 </html>

@@ -228,9 +228,10 @@ async def index(request):
 # static files
 @app.route('<path:path>')
 async def static(request, path):
+  # print(f"sending file {path}\n")
   if '..' in path:
     # directory traversal is not allowed
-    return 'Not found',404
+    return ('Not found',404)
   return send_file('public_html/'+path)
 
 # loop which constantly reads SHT75/SHT85 sensors
