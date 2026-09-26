@@ -17,3 +17,4 @@
 [x] feedback (OK,FAIL) at setting log events
 [x] input field for hostname
 [ ] table mouse hover purple - why different color
+[ ] reboot

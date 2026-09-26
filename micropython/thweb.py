@@ -12,7 +12,7 @@ from sys import implementation
 from sht75 import SHT75
 from sht85 import SHT85
 from time import localtime
-import os,network,ntptime
+import os,network,ntptime,machine
 import thpinout,thwificfg,thlogcfg,thname,ssd1306txt
 
 logfilef="/public_html/thlog%04d.csv"
@@ -179,6 +179,12 @@ def write_thname_py():
   except:
     return False
   return True
+
+# remote reboot
+@app.get('/reboot')
+async def index(request):
+  machine.reset()
+  return "OK"
 
 # set/get hostname
 @app.get('/host')
