@@ -166,6 +166,33 @@ async def index(request):
   #port=request.args['port'] # argument "port" value 1 given like http://host/read?port=1
   return readout
 
+def write_thname_py():
+  try:
+    with open("thname.py","w") as cfgfile:
+      try:
+        cfgfile.write("# HOSTNAME will be shown on web site\n")
+        cfgfile.write("# HOSTNAME is suggested to the DHCP but\n")
+        cfgfile.write("# DHCP is not oblidged to accept it.\n")
+        cfgfile.write(f'HOSTNAME="{thname.HOSTNAME}"\n')
+      except:
+        return False
+  except:
+    return False
+  return True
+
+# set/get hostname
+@app.get('/host')
+async def index(request):
+  try:
+    thname.HOSTNAME=request.args['name'] # argument "name" value given like http://host/host?name=TH2
+    wifi.config(dhcp_hostname=thname.HOSTNAME) # immediately apply 
+    if not write_thname_py():
+      return "FAIL?"
+  except:
+    # get hostname
+    pass
+  return thname.HOSTNAME
+
 # request and response example:
 # readout in json format
 # http://host/read

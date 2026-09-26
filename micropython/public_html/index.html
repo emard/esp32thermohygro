@@ -11,6 +11,35 @@
       return document.getElementById(id);
     }
 
+    function hostname_fill_html(name)
+    {
+      var set_hostname_response=document.getElementById("set_hostname_response");
+      set_hostname_response.innerHTML="OK";
+      var inputfield_hostname=document.getElementById("hostname");
+      inputfield_hostname.value=name;
+    }
+
+    function form_set_hostname()
+    {
+      var set_hostname_response=document.getElementById("set_hostname_response");
+      set_hostname_response.innerHTML="WAIT";
+      var inputfield_hostname=document.getElementById("hostname");
+      // answer from hardware in string format
+      fetch("host?name="+inputfield_hostname.value)
+      .then(response => {return response.text();})
+      .then(text => {hostname_fill_html(text);});
+    }
+
+    function get_hostname()
+    {
+      var get_hostname_response=document.getElementById("set_hostname_response");
+      get_hostname_response.innerHTML="WAIT";
+      // answer from hardware in string format
+      fetch("host")
+      .then(response => {return response.text();})
+      .then(text => {hostname_fill_html(text);});
+    }
+
     function add_log_download_link(filename)
     {
       // \D matches a character that is not a numerical digit.
@@ -196,6 +225,7 @@
     {
       // document.getElementById("example_form").addEventListener("submit", answer_form);
       // answer_form();
+      get_hostname(); // who we are
       form_answer_hardware_json(); // execute immediately after page load
       //setInterval(form_answer_hardware_json, 60*1000); // peridically execute in minute intervals
       runAtEveryFullMinute(form_answer_hardware_json);
@@ -218,7 +248,7 @@
   <b>hostname:</b>
   <input type="text" name="hostname" id="hostname"
   pattern="[a-zA-Z0-9][a-zA-Z0-9\-]+[a-zA-Z0-9]"
-  maxlength="63" value="TH2"/>
+  maxlength="63" value="?"/>
   <input type="submit" value="SET">
   <b id="set_hostname_response">OK</b>
   </form>

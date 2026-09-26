@@ -15,4 +15,5 @@
 [x] javascript: in download list, year that endsWith("9") should add <br/> newline
 [x] help.html page
 [x] feedback (OK,FAIL) at setting log events
-[ ] input field for hostname
+[x] input field for hostname
+[ ] table mouse hover purple - why different color
