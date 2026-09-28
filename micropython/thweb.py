@@ -13,7 +13,7 @@ from sht75 import SHT75
 from sht85 import SHT85
 from time import localtime
 import os,network,ntptime,machine
-import thpinout,thwificfg,thlogcfg,thname,ssd1306txt
+import thpinout,thwificfg,thlogcfg,thname,ssd1306txt,thdisp
 
 logfilef="/public_html/thlog%04d.csv"
 
@@ -293,7 +293,7 @@ async def loop_sensor_read():
     t1,rh1,serial1=sensor1.read_temp_humidity()    
     if t1<-99:
       model1=""
-    ssd1306txt.thdisp(1,model1,t1,rh1,serial1)
+    thdisp.thdisp(1,model1,t1,rh1,serial1)
     if t2<-99:
       model2="SHT85"
       sensor2=SHT85(sck_pin=thpinout.sensor2_scl_pin, data_pin=thpinout.sensor2_sda_pin)
@@ -303,7 +303,7 @@ async def loop_sensor_read():
     t2,rh2,serial2=sensor2.read_temp_humidity()
     if t2<-99:
       model2=""
-    ssd1306txt.thdisp(2,model2,t2,rh2,serial2)
+    thdisp.thdisp(2,model2,t2,rh2,serial2)
     readout="%04d-%02d-%02dT%02d:%02d:%02dZ " % local_time[0:6]
     readout+="%s S1=%08X T1=%5.2f C RH1=%5.2f %% S2=%08X T2=%5.2f C RH2=%5.2f %% " % (wifi.ifconfig()[0],serial1,t1,rh1,serial2,t2,rh2,)
     readout+="FREE=%d bytes" % (storagefree(),)
