@@ -13,12 +13,13 @@ Install Microypthon for ESP32-S3:
 
     pipx install esptool
     wget https://micropython.org/resources/firmware/ESP32_GENERIC_S3-SPIRAM_OCT-20260824-v1.29.0.bin
-    esptool.py --port /dev/ttyACM0 --baud 460800 write_flash 0 ESP32_GENERIC_S3-SPIRAM_OCT-20260824-v1.29.0.bin
+    esptool --port /dev/ttyACM0 --baud 460800 write_flash 0 ESP32_GENERIC_S3-SPIRAM_OCT-20260824-v1.29.0.bin
 
 Install Thermohygrometer:
 
     pipx install mpremote
     mkdir -p lib
+    mpremote mip install ssd1306
     wget https://raw.githubusercontent.com/miguelgrinberg/microdot/refs/heads/main/src/microdot/microdot.py -O lib/microdot.py
     mpremote cp lib/microdot.py :/lib/
     mpremote cp -r *.py public_html :/
