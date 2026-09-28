@@ -120,6 +120,8 @@ th, td
 
 table tr:hover {background-color: #252565;}
 
+/* some special action on n-th table column element */
+/*
 table tr td:nth-child(3):hover {
   background-color: #c599f5;
 }
@@ -127,13 +129,15 @@ table tr td:nth-child(3):hover {
 table tr td:nth-child(3) button {
   color: #7F0000;
 }
+*/
 
-/* make whole table cell in fist column clickable */
+/* make whole table cell in first column clickable */
+/*
 table tr td:nth-child(1) a {
     display:block;
     width:100%;
 }
-
+*/
 
 /*
 table tr td:nth-child(2) {
