@@ -1,4 +1,5 @@
-[ ] on OLED show time, IP, WiFi signal strength
+[ ] on OLED show time, IP
+[ ] on OLED show WiFi signal strength
 [ ] from free bytes calculate max log date
 [x] function with a localtime condition to trigger logging
 [x] every new day resync ntptime
@@ -16,6 +17,6 @@
 [x] help.html page
 [x] feedback (OK,FAIL) at setting log events
 [x] input field for hostname
-[ ] table mouse hover purple - why different color
+[x] table mouse hover purple - why different color
 [x] reboot
 [ ] version
