@@ -13,7 +13,7 @@ from sht75 import SHT75
 from sht85 import SHT85
 from time import localtime
 import os,network,ntptime,machine
-import thpinout,thwificfg,thlogcfg,thname,ssd1306txt,thdisp
+import thpinout,thwificfg,thlogcfg,thname,thcalib,interp1d,ssd1306txt,thdisp
 
 logfilef="/public_html/thlog%04d.csv"
 
@@ -29,6 +29,21 @@ readout=""
 track_basis_before=-1 # initial negative value is always different than any actual value
 track_hours_before=-1 # initial negative value is always different than any actual value
 log_basis=5 # 3:daily 4:hourly 5:minutely
+
+def load_calib():
+  global calib_t,calib_rh
+  calib_t={}
+  calib_rh={}
+  for serial,in_t in thcalib.in_t.items():
+    try:
+      calib_t[serial]=interp1d.Linear(in_t,thcalib.out_t[serial])
+    except:
+      pass
+  for serial,in_rh in thcalib.in_rh.items():
+    try:
+      calib_rh[serial]=interp1d.Linear(in_rh,thcalib.out_rh[serial])
+    except:
+      pass
 
 def reset_wifi():
   for a in (False, True):
@@ -60,9 +75,27 @@ def storagefree()->int:
 
 def logline()->str:
   # datetime,ip,serial1,t1,rh1,serial2,t2,rh2
+  # apply calibration to the readings
+  # on error pass the original readings
+  try:
+    ct1=calib_t[serial1](t1)
+  except:
+    ct1=t1
+  try:
+    ct2=calib_t[serial2](t2)
+  except:
+    ct2=t2
+  try:
+    crh1=calib_t[serial1](rh1)
+  except:
+    crh1=rh1
+  try:
+    crh2=calib_t[serial2](rh2)
+  except:
+    crh2=rh2
   line='"%04d-%02d-%02d %02d:%02d:%02d" ' % localtime()[0:6]
   line+=f"{wifi.ifconfig()[0]} "
-  line+=f"{serial1:08X} {t1:.2f} {rh1:.2f} {serial2:08X} {t2:.2f} {rh2:.2f}\n"
+  line+=f"{serial1:08X} {ct1:.2f} {crh1:.2f} {serial2:08X} {ct2:.2f} {crh2:.2f}\n"
   return line
 
 def daily_ntp_sync(hour_now:int,hour_sync:int):
@@ -321,5 +354,6 @@ async def main():
   await app.start_server(port=80,debug=False) # debug=True prints http requests
   await asyncio.sleep(0.010)
 
+load_calib()
 wificonnect()
 asyncio.run(main())
