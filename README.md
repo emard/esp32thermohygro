@@ -18,11 +18,11 @@ Install Microypthon for ESP32-S3:
 Install Thermohygrometer:
 
     pipx install mpremote
-    mkdir -p lib
     mpremote mip install ssd1306
+    mkdir -p lib
     wget https://raw.githubusercontent.com/miguelgrinberg/microdot/refs/heads/main/src/microdot/microdot.py -O lib/microdot.py
-    mpremote cp lib/microdot.py :/lib/
-    mpremote cp -r *.py public_html :/
+    wget https://raw.githubusercontent.com/BrianPugh/micropython-libs/refs/heads/main/lib/interp1d.py -O lib/interp1d.py
+    mpremote cp -r *.py lib public_html :/
 
 Install pye editor:
 
