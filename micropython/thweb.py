@@ -62,7 +62,7 @@ def wificonnect():
     reset_wifi()
   wifi=network.WLAN(network.STA_IF)
   reset_wifi()
-  wifi.config(dhcp_hostname=thname.HOSTNAME)
+  wifi.config(dhcp_hostname=thname.HOSTNAME,txpower=14)
   wifi.connect(thwificfg.USER, thwificfg.PASS)
   #print("show IP address:")
   #print("webserver.wifi.ifconfig()")
@@ -86,11 +86,11 @@ def logline()->str:
   except:
     ct2=t2
   try:
-    crh1=calib_t[serial1](rh1)
+    crh1=calib_rh[serial1](rh1)
   except:
     crh1=rh1
   try:
-    crh2=calib_t[serial2](rh2)
+    crh2=calib_rh[serial2](rh2)
   except:
     crh2=rh2
   line='"%04d-%02d-%02d %02d:%02d:%02d" ' % localtime()[0:6]
