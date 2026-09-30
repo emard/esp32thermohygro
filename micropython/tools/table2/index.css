@@ -1,0 +1,48 @@
+/*
+Source - https://stackoverflow.com/a/54446873
+Posted by Yordan Georgiev, modified by community. See post 'Timeline' for change history
+Retrieved 2026-09-30, License - CC BY-SA 4.0
+*/
+
+.cls-context-menu-link {
+  display: block;
+  padding: 20px;
+  background: #ECECEC;
+}
+
+.cls-context-menu {
+  position: absolute;
+  display: none;
+}
+
+.cls-context-menu ul,
+#context-menu li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: white;
+}
+
+.cls-context-menu {
+  border: solid 1px #CCC;
+}
+
+.cls-context-menu li {
+  border-bottom: solid 1px #CCC;
+}
+
+.cls-context-menu li:last-child {
+  border: none;
+}
+
+.cls-context-menu li a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: blue;
+}
+
+.cls-context-menu li a:hover {
+  background: blue;
+  color: #FFF;
+}
