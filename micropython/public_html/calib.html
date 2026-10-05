@@ -12,6 +12,98 @@
       return document.getElementById(id);
     }
 
+    // type is "th" (header) or "td" (data)
+    function create_table_row(type,x,y)
+    {
+      const row = document.createElement('tr');
+      const cell_in = document.createElement(type);
+      const cell_out = document.createElement(type);
+      cell_in.textContent = `${x}`;
+      cell_out.textContent = `${y}`;
+      row.appendChild(cell_in);
+      row.appendChild(cell_out);
+      return row;
+    }
+
+    // Function to create a table
+    function createTable(id)
+    {
+      const table = document.createElement('table');
+      table.id = id;
+      table.setAttribute("class","editabletable")
+      const tbody = document.createElement('tbody');
+      tbody.appendChild(create_table_row("th","Serial","Points"));
+      tbody.appendChild(create_table_row("td","0x12345678","4"));
+      tbody.appendChild(create_table_row("th","in T [°C]","out T [°C]"));
+      for(let i=0; i < 4; i++)
+        tbody.appendChild(create_table_row("td",i,i+1));
+      table.appendChild(tbody);
+      return table;
+    }
+
+    function populate_tables()
+    {
+      // Populate the array with tables
+      var calibration_tables=document.getElementById("calibration_tables");
+      const tablesArray = [];
+      for (let i = 1; i <= 2; i++) {
+        const table = createTable(`table${i}`);
+        tablesArray.push(table);
+        calibration_tables.appendChild(table); // Append to the body or a specific parent element
+        const newline=document.createElement("br");
+        calibration_tables.appendChild(newline);
+      }
+    }
+
+    function deleteRowsBelow(table,index)
+    {
+      // var table = document.getElementById("myTable");
+      var rowCount = table.rows.length;
+      // Loop through the rows starting from the index + 1
+      for (var i = rowCount-1; i > index; i--)
+        table.deleteRow(i);
+    }
+
+    // delete all calib tables
+    function del_calib_tables()
+    {
+      var calibration_tables=document.getElementById("calibration_tables");
+      //var calibration_tables=document.getElementById("in_rh_0x12345678");
+      //if(calibration_tables)
+      //  calibration_tables.remove();
+      //calibration_tables.innerHTML = "";
+      while (calibration_tables.hasChildNodes())
+        calibration_tables.firstChild.remove();
+    }
+
+    function calib_fill_html(json_str)
+    {
+      var set_calib_response=document.getElementById("set_calib_response");
+      set_calib_response.innerHTML="OK";
+      //var in_rh_table=document.getElementById("in_rh_0x12345678");
+      //deleteRowsBelow(in_rh_table,2);
+      del_calib_tables();
+      populate_tables();
+      editabletable_init();
+      //var json_parsed=JSON.parse(json_str);
+      //for(const calib_t of json_parsed.calib_t)
+      //  add_calib_table("T",calib_t);
+      //for(const calib_rh of json_parsed.calib_rh)
+      //  add_calib_table("RH",calib_rh);
+    }
+
+    function set_calib()
+    {
+      // get calibration settings and fill html table with it
+      var set_calib_response=document.getElementById("set_calib_response");
+      set_calib_response.innerHTML="WAIT";
+      fetch("calib")
+      .then(response => {return response.text();})
+      .then(text => {calib_fill_html(text);});
+      // text answer is json string like:
+      // {"in_t":{0:[-40,105],0x12345678:[-40,105]},"out_t":{0:[-40,105],0x12345678:[-40,105]},"in_rh":{},"out_rh":{}}<br/>
+    }
+
     function hostname_fill_html(name)
     {
       var set_hostname_response=document.getElementById("set_hostname_response");
@@ -134,10 +226,11 @@
     function form_answer_hardware_line()
     {
       // query (port) is string like "1" or empty
-      var query=document.getElementById("query_hardware_line").value;
+      //var query=document.getElementById("query_hardware_line").value;
       var answer=document.getElementById("answer_hardware_line");
       // answer from hardware in string format
-      fetch("line?port="+query)
+      //fetch("line?port="+query)
+      fetch("line")
       .then(response => {return response.text();})
       .then(text => answer.innerHTML=text);
       // answer is string like:
@@ -225,19 +318,19 @@
     window.onload = function ()
     {
       editabletable_init();
-      return;
       // document.getElementById("example_form").addEventListener("submit", answer_form);
       // answer_form();
       get_hostname(); // who we are
-      form_answer_hardware_json(); // execute immediately after page load
+      //form_answer_hardware_json(); // execute immediately after page load
       //setInterval(form_answer_hardware_json, 60*1000); // peridically execute in minute intervals
-      runAtEveryFullMinute(form_answer_hardware_json);
-      form_answer_get_log_events();
+      //runAtEveryFullMinute(form_answer_hardware_json);
+      //form_answer_get_log_events();
       //log_fill_html("1");
       //log_fill_html('{"basis":4,"events":"1,2,3,4,8"}');
       //add_log_download_link("thlog2025.csv");
       //add_log_download_link("thlog2026.csv");
-      get_log_files();
+      //get_log_files();
+      set_calib();
     }
   </script>
 </head>
@@ -282,6 +375,7 @@
   </table>
   <h2>Calibration</h2>
   <p id="calibration_tables">
+  <!--
   <table class="editabletable">
     <tr><th>Serial:</th><th>Points:</th></tr>
     <tr><td>0x12345678</td><td>4</td></tr>
@@ -292,15 +386,11 @@
     <tr><td>30</td><td>33</tr>
   </table>
   <br/>
-  <table class="editabletable">
-    <tr><th>Serial:</th><th>Points:</th></tr>
-    <tr><td>0x12345678</td><td>4</td></tr>
-    <tr><th>In RH [%]</th><th>Out RH [%]</th></tr>
-    <tr><td>30</td><td>31</td></tr>
-    <tr><td>32</td><td>35</td></tr>
-    <tr><td>40</td><td>42</td></tr>
-    <tr><td>50</td><td>53</tr>
-  </table>
+  -->
   </p>
+  <form id="form_set_calib" onsubmit="set_calib();return false">
+  <input type="submit" value="SET">
+  <b id="set_calib_response">?</b>
+  </form>
 </body>
 </html>

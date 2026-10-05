@@ -30,18 +30,32 @@ track_basis_before=-1 # initial negative value is always different than any actu
 track_hours_before=-1 # initial negative value is always different than any actual value
 log_basis=5 # 3:daily 4:hourly 5:minutely
 
+# split array to two arrays,
+# one with even other with odd indexed elements
+def array_split_even_odd(a):
+  even=[]
+  odd=[]
+  for i in range(len(a)):
+    if i&1:
+      odd.append(a[i])
+    else:
+      even.append(a[i])
+  return even,odd
+
 def load_calib():
   global calib_t,calib_rh
   calib_t={}
   calib_rh={}
-  for serial,in_t in thcalib.in_t.items():
+  for serial,inout_t in thcalib.t.items():
     try:
-      calib_t[serial]=interp1d.Linear(in_t,thcalib.out_t[serial])
+      in_t,out_t = array_split_even_odd(inout_t)
+      calib_t[serial]=interp1d.Linear(in_t,out_t)
     except:
       pass
-  for serial,in_rh in thcalib.in_rh.items():
+  for serial,inout_rh in thcalib.rh.items():
     try:
-      calib_rh[serial]=interp1d.Linear(in_rh,thcalib.out_rh[serial])
+      in_rh,out_rh = array_split_even_odd(inout_rh)
+      calib_rh[serial]=interp1d.Linear(in_rh,out_rh)
     except:
       pass
 
@@ -248,9 +262,7 @@ async def index(request):
 
 @app.get('/calib')
 async def index(request):
-  answer ='{"in_t":%s,"out_t":%s,' % (thcalib.in_t,thcalib.out_t)
-  answer+='"in_rh":%s,"out_rh":%s}\n' % (thcalib.in_rh,thcalib.out_rh)
-  return answer
+  return '{"calib_t":%s,"calib_rh":%s}\n' % (thcalib.t,thcalib.rh)
 
 # returns log status as JSON string
 def logstatus()->str:

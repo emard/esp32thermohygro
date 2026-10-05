@@ -133,10 +133,11 @@
     function form_answer_hardware_line()
     {
       // query (port) is string like "1" or empty
-      var query=document.getElementById("query_hardware_line").value;
+      //var query=document.getElementById("query_hardware_line").value;
       var answer=document.getElementById("answer_hardware_line");
       // answer from hardware in string format
-      fetch("line?port="+query)
+      //fetch("line?port="+query)
+      fetch("line")
       .then(response => {return response.text();})
       .then(text => answer.innerHTML=text);
       // answer is string like:
@@ -242,6 +243,7 @@
   <h1>THERMOHYGROMETER TH2 &#x1F321;&#x2602;</h1>
   <p>
   <a href="index.html">Home</a>
+  <a href="calib.html">Calibration</a>
   <a href="help.html">Help</a>
   </p>
   <form id="form_set_hostname" onsubmit="form_set_hostname();return false">
@@ -250,7 +252,7 @@
   pattern="[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]"
   maxlength="32" value="?"/>
   <input type="submit" value="SET">
-  <b id="set_hostname_response">OK</b>
+  <b id="set_hostname_response">?</b>
   </form>
   <br/>
   <table border="1">
