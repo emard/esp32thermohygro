@@ -246,6 +246,12 @@ async def index(request):
   #  answer+='"serial1":%d,"t1":%.2f,"rh1":%.2f,"serial2":%d,"t2":%.2f,"rh2":%.2f}' % (serial1,t1,rh1,serial2,t2,rh2)
   return answer
 
+@app.get('/calib')
+async def index(request):
+  answer ='{"in_t":%s,"out_t":%s,' % (thcalib.in_t,thcalib.out_t)
+  answer+='"in_rh":%s,"out_rh":%s}\n' % (thcalib.in_rh,thcalib.out_rh)
+  return answer
+
 # returns log status as JSON string
 def logstatus()->str:
   logevents=str(thlogcfg.events)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
