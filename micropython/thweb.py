@@ -46,15 +46,14 @@ def load_calib():
   global calib_t,calib_rh
   calib_t={}
   calib_rh={}
-  for serial,inout_t in thcalib.t.items():
+  for serial,calibdata in thcalib.calib.items():
     try:
-      in_t,out_t = array_split_even_odd(inout_t)
+      in_t,out_t = array_split_even_odd(calibdata["T"])
       calib_t[serial]=interp1d.Linear(in_t,out_t)
     except:
       pass
-  for serial,inout_rh in thcalib.rh.items():
     try:
-      in_rh,out_rh = array_split_even_odd(inout_rh)
+      in_rh,out_rh = array_split_even_odd(calibdata["RH"])
       calib_rh[serial]=interp1d.Linear(in_rh,out_rh)
     except:
       pass
@@ -227,6 +226,22 @@ def write_thname_py():
     return False
   return True
 
+def write_thcalib_py():
+  try:
+    with open("thcalib.py","w") as cfgfile:
+      try:
+        cfgfile.write('# {serial1:{"T":[array],"RH":[array]},serial2:{},...}\n')
+        cfgfile.write("# calib table is array with even number of elements\n")
+        cfgfile.write("# starting from index 0 (even element), each even,odd pair\n")
+        cfgfile.write("# of numbers means one calibration point as:\n")
+        cfgfile.write("# direct reading in -> log written out\n")
+        cfgfile.write(f'calib={thcalib.calib}\n')
+      except:
+        return False
+  except:
+    return False
+  return True
+
 # remote reboot
 @app.get('/reboot')
 async def index(request):
@@ -260,9 +275,43 @@ async def index(request):
   #  answer+='"serial1":%d,"t1":%.2f,"rh1":%.2f,"serial2":%d,"t2":%.2f,"rh2":%.2f}' % (serial1,t1,rh1,serial2,t2,rh2)
   return answer
 
+# jsonize calibration dictionary converting it to a string:
+# keys from binary integers are converted to decimal strings
+def calib2json(x):
+  json=""
+  for key,value in x.items():
+    # json doesn't allow trailing comma
+    if json:
+      json+=","
+    else:
+      json+="{"
+    # key can't be integer, it should be string with double quotes
+    # in the value, string keys with single quoutes should be replaced to double
+    json+='"%d":%s' % (key,str(value).replace("'",'"'))
+  json+="}"
+  return json
+
+def calibjson2dict(json):
+  dic=eval(json) # NOTE eval any input string as python code is security risk
+  retval={}
+  for key,value in dic.items():
+    retval[int(key)]=value
+  return retval
+
 @app.get('/calib')
 async def index(request):
-  return '{"calib_t":%s,"calib_rh":%s}\n' % (thcalib.t,thcalib.rh)
+  try:
+    newcalib=request.args['set'] # argument "set" value given is a json string containing a dictionary
+    #print(newcalib)
+    #print(calibjson2dict(newcalib))
+    thcalib.calib=calibjson2dict(newcalib)
+    load_calib()
+    if not write_thcalib_py():
+      return "FAIL?"
+  except:
+    # get calib
+    pass
+  return '%s\n' % calib2json(thcalib.calib)
 
 # returns log status as JSON string
 def logstatus()->str:

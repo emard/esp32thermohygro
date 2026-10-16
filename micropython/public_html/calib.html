@@ -26,33 +26,39 @@
     }
 
     // Function to create a table
-    function createTable(id)
+    function createTable(id,serial,values)
     {
       const table = document.createElement('table');
       table.id = id;
       table.setAttribute("class","editabletable")
       const tbody = document.createElement('tbody');
       tbody.appendChild(create_table_row("th","Serial","Points"));
-      tbody.appendChild(create_table_row("td","0x12345678","4"));
+      const serial_hex=parseInt(serial).toString(16).toUpperCase();
+      const npoints=Object.keys(values).length;
+      tbody.appendChild(create_table_row("td",serial_hex,Math.floor(npoints/2)));
       tbody.appendChild(create_table_row("th","in T [°C]","out T [°C]"));
-      for(let i=0; i < 4; i++)
-        tbody.appendChild(create_table_row("td",i,i+1));
+      for(var n=0; n<npoints; n+=2)
+        tbody.appendChild(create_table_row("td",values[n],values[n+1]));
       table.appendChild(tbody);
       return table;
     }
 
-    function populate_tables()
+    function populate_tables(json_str)
     {
       // Populate the array with tables
+      var json_parsed=JSON.parse(json_str);
       var calibration_tables=document.getElementById("calibration_tables");
       const tablesArray = [];
-      for (let i = 1; i <= 2; i++) {
-        const table = createTable(`table${i}`);
-        tablesArray.push(table);
-        calibration_tables.appendChild(table); // Append to the body or a specific parent element
-        const newline=document.createElement("br");
-        calibration_tables.appendChild(newline);
-      }
+      for(const serial in json_parsed)
+        for(const unit in json_parsed[serial])
+        {
+          const table =
+          createTable(`table_${unit}`,serial,json_parsed[serial][unit]);
+          tablesArray.push(table);
+          calibration_tables.appendChild(table); // Append to the body or a specific parent element
+          const newline=document.createElement("br");
+          calibration_tables.appendChild(newline);
+        }
     }
 
     function deleteRowsBelow(table,index)
@@ -83,8 +89,10 @@
       //var in_rh_table=document.getElementById("in_rh_0x12345678");
       //deleteRowsBelow(in_rh_table,2);
       del_calib_tables();
-      populate_tables();
+      populate_tables(json_str);
       editabletable_init();
+      //var show_json_str=document.getElementById("show_json_str");
+      //show_json_str.innerHTML=json_str;
       //var json_parsed=JSON.parse(json_str);
       //for(const calib_t of json_parsed.calib_t)
       //  add_calib_table("T",calib_t);
@@ -92,12 +100,25 @@
       //  add_calib_table("RH",calib_rh);
     }
 
-    function set_calib()
+    function get_calib()
     {
       // get calibration settings and fill html table with it
       var set_calib_response=document.getElementById("set_calib_response");
       set_calib_response.innerHTML="WAIT";
       fetch("calib")
+      .then(response => {return response.text();})
+      .then(text => {calib_fill_html(text);});
+      // text answer is json string like:
+      // {"in_t":{0:[-40,105],0x12345678:[-40,105]},"out_t":{0:[-40,105],0x12345678:[-40,105]},"in_rh":{},"out_rh":{}}<br/>
+    }
+
+    function set_calib()
+    {
+      // set calibration settings from filled html table
+      var set_calib_response=document.getElementById("set_calib_response");
+      set_calib_response.innerHTML="WAIT";
+      fetch('calib?set={"0":{"RH": [0, 0, 100, 100], "T": [-40, -40, 105, 105]},"12345678":{"RH": [0, 90, 100, 100], "T": [-40, 90, 105, 105]}}')
+      //fetch('calib?set=1234')
       .then(response => {return response.text();})
       .then(text => {calib_fill_html(text);});
       // text answer is json string like:
@@ -279,15 +300,6 @@
       // "{'serial1':123456,'t1':29.26,'rh1':40.06,'serial2':7890123,'t2':28.78,'rh2':40.56}"
     }
 
-    function form_answer_emulator()
-    {
-      // query is string like ":e1"
-      var query=document.getElementById("query_emulator").value;
-      var answer=document.getElementById("answer_emulator");
-      // answer from emulator
-      answer.innerHTML=emulator(query);
-    }
-    
     function getTimeUntilNextMinute()
     {
       const now = new Date();
@@ -330,7 +342,7 @@
       //add_log_download_link("thlog2025.csv");
       //add_log_download_link("thlog2026.csv");
       //get_log_files();
-      set_calib();
+      get_calib();
     }
   </script>
 </head>
@@ -392,5 +404,6 @@
   <input type="submit" value="SET">
   <b id="set_calib_response">?</b>
   </form>
+  <b id="show_json_str">json_str</b>
 </body>
 </html>
