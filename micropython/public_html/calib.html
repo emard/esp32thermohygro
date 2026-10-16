@@ -53,7 +53,7 @@
         for(const unit in json_parsed[serial])
         {
           const table =
-          createTable(`table_${unit}`,serial,json_parsed[serial][unit]);
+          createTable(`calib_${serial}_${unit}`,serial,json_parsed[serial][unit]);
           tablesArray.push(table);
           calibration_tables.appendChild(table); // Append to the body or a specific parent element
           const newline=document.createElement("br");
@@ -112,11 +112,23 @@
       // {"in_t":{0:[-40,105],0x12345678:[-40,105]},"out_t":{0:[-40,105],0x12345678:[-40,105]},"in_rh":{},"out_rh":{}}<br/>
     }
 
+    // from html tables generate new submittable json string
+    function tables2newcalib_json()
+    {
+      var idStartsWith = "calib"
+      var calib_tables = document.querySelectorAll(`[id^=${idStartsWith}]`);
+      var json_str="1234";
+      var show_json_str=document.getElementById("show_json_str");
+      show_json_str.innerHTML=json_str;
+      return json_str;
+    }
+
     function set_calib()
     {
       // set calibration settings from filled html table
       var set_calib_response=document.getElementById("set_calib_response");
       set_calib_response.innerHTML="WAIT";
+      var json_str=tables2newcalib_json();
       fetch('calib?set={"0":{"RH": [0, 0, 100, 100], "T": [-40, -40, 105, 105]},"12345678":{"RH": [0, 90, 100, 100], "T": [-40, 90, 105, 105]}}')
       //fetch('calib?set=1234')
       .then(response => {return response.text();})

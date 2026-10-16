@@ -302,7 +302,7 @@ def calibjson2dict(json):
 async def index(request):
   try:
     newcalib=request.args['set'] # argument "set" value given is a json string containing a dictionary
-    #print(newcalib)
+    print(newcalib)
     #print(calibjson2dict(newcalib))
     thcalib.calib=calibjson2dict(newcalib)
     load_calib()
