@@ -1,4 +1,4 @@
-[ ] on OLED show time, IP
+[x] on OLED show time, IP
 [ ] on OLED show WiFi signal strength
 [ ] from free bytes calculate max log date
 [x] function with a localtime condition to trigger logging
@@ -19,4 +19,8 @@
 [x] input field for hostname
 [x] table mouse hover purple - why different color
 [x] reboot
+[ ] bug if calib table is partially filled,
+    if in field has value, but out field is empty
+    then all remaining values will shift unwantedly
+[x] move calibration setting to calib.html page
 [ ] version

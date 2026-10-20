@@ -5,6 +5,6 @@
 # of numbers means one calibration point as:
 # direct reading in -> log written out
 calib = {
-0         :{"T":[-40, 90, 105,105], "RH":[0,90, 100,100]},
+0         :{"T":[-40,-40, 105,105], "RH":[0, 0, 100,100]},
 0x12345678:{"T":[-40,-40, 105,105], "RH":[0, 0, 100,100]},
 }
