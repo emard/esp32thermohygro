@@ -11,7 +11,8 @@ from microdot import *
 from sys import implementation
 from sht75 import SHT75
 from sht85 import SHT85
-from time import localtime
+from time import time
+import dst
 import os,network,ntptime,machine
 import thpinout,thwificfg,thlogcfg,thname,thcalib,interp1d,ssd1306txt,thdisp
 
@@ -106,7 +107,7 @@ def logline()->str:
     crh2=calib_rh[serial2](rh2)
   except:
     crh2=rh2
-  line='"%04d-%02d-%02d %02d:%02d:%02d" ' % localtime()[0:6]
+  line='"%04d-%02d-%02d %02d:%02d:%02d" ' % dst.localtime(time())[0:6]
   line+=f"{wifi.ifconfig()[0]} "
   line+=f"{serial1:08X} {ct1:.2f} {crh1:.2f} {serial2:08X} {ct2:.2f} {crh2:.2f}\n"
   return line
@@ -146,7 +147,7 @@ def remove_old_log(minfree=65536):
 
 def log2file():
   global track_basis_before
-  time_now=localtime() # sample time now
+  time_now=dst.localtime(time()) # sample time now
   basis_now=time_now[thlogcfg.basis] # 3:daily, 4:hourly, 5:minutely
   if time_now[0]<2020: # clock is not synchronized (usually 2000)
     return
@@ -182,7 +183,7 @@ def log2file():
       with open(logfile, "a") as file:
         # write first 2 lines as the file header
         file.write('"DATETIME" "ADDR" "SERIAL1" "T1" "RH1" "SERIAL2" "T2" "RH2"\n')
-        file.write('"[UTC]" "[IP]" "[HEX]" "[°C]" "[%]" "[HEX]" "[°C]" "[%]"\n')
+        file.write('"[local]" "[IP]" "[HEX]" "[°C]" "[%]" "[HEX]" "[°C]" "[%]"\n')
         file.write(logline())
         #print(f"File {logfile} created.")
         file.close()
@@ -268,7 +269,7 @@ async def index(request):
 @app.get('/read')
 async def index(request):
   #port=request.args['port'] # argument "port" value 1 given like http://host/json?port=1
-  answer='{"datetime":"%04d-%02d-%02dT%02d:%02d:%02dZ",' % localtime()[0:6]
+  answer='{"datetime":"%04d-%02d-%02dT%02d:%02d:%02dZ",' % dst.localtime(time())[0:6]
   answer+=f'"serial1":{serial1},"t1":{t1:.2f},"rh1":{rh1:.2f},"serial2":{serial2},"t2":{t2:.2f},"rh2":{rh2:.2f},'
   answer+=f'"free":{storagefree()}'
   answer+='}\n'
@@ -318,7 +319,7 @@ def logstatus()->str:
   logevents=str(thlogcfg.events)[1:-1].strip().strip(",") # tuple without brackets then strip " " and ","
   return '{"basis":%d,"events":"%s","files":%s}' % (thlogcfg.basis,logevents,logfiles_str()) # json
 
-# reads/sets integer hours [UTC] in a day when to log
+# reads/sets integer hours in a day when to log
 # http://host/log
 # http://host/log?basis=3&list=5,8,10
 @app.get('/log')
@@ -349,7 +350,7 @@ async def index(request):
         cfgfile.write("# log basis 1:yearly 2:monthly 3:daily 4:hourly 5:minutely\n")
         cfgfile.write(f"basis={basis_int}\n")
         cfgfile.write("# when to write log\n")
-        cfgfile.write("# hours are in UTC (GMT) time zone\n")
+        cfgfile.write("# hours are in local time zone\n")
         cfgfile.write("# comma separated list of integer sub-basis months/days/hours/minutes/econds\n")
         cfgfile.write(f"events={str(list_tuple)}\n")
       except:
@@ -376,14 +377,14 @@ async def loop_sensor_read():
     scl_pin=thpinout.display_scl_pin,sda_pin=thpinout.display_sda_pin,
     rst_pin=thpinout.display_rst_pin,dc_pin=thpinout.display_dc_pin,cs_pin=thpinout.display_cs_pin)
   while True:
-    if localtime()[0]<2020:
+    if dst.localtime(time())[0]<2020:
       if wifi.isconnected():
         if wifi.ifconfig()[0]!="0.0.0.0":
           try:
             ntptime.settime()
           except:
             pass
-    local_time=localtime()
+    local_time=dst.localtime(time())
     if t1<-99:
       model1="SHT85"
       sensor1=SHT85(sck_pin=thpinout.sensor1_scl_pin, data_pin=thpinout.sensor1_sda_pin)
@@ -413,7 +414,7 @@ async def loop_sensor_read():
     readout+="FREE=%d bytes" % (storagefree(),)
     print(readout)
     log2file()
-    while local_time[5]==localtime()[5]: # wait until next second
+    while local_time[5]==dst.localtime(time())[5]: # wait until next second
       await asyncio.sleep(0.2) # for SHT75 max 1 measurement per second
 
 async def main():
