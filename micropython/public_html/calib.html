@@ -174,33 +174,45 @@
                 json_str+="*";
                 calib_cells=row.querySelectorAll(`td`);
                 var col_n=0;
+                var prepare_row=[];
                 for(var cell of calib_cells)
                 {
                   json_str+="+";
                   if(cell.textContent)
                   {
-                  if(row_n==1 && col_n==0)
-                  {
-                    serial=parseInt(cell.textContent,16); // take serial number from row 1 col 0
-                    if(!(serial in caltab))
-                      caltab[serial]={};
-                  }
-                  else if (row_n==2 && col_n==0)
-                  {
-                    unit=cell.textContent.split(" ")[1]; // take unit name from row 2 col 0
-                    if(!(unit in caltab[serial]))
-                      caltab[serial][unit]=[];
-                  }
-                  else if (row_n>2)
-                  {
-                    if(!(serial in caltab))
-                      caltab[serial]={};
-                    if(!(unit in caltab[serial]))
-                      caltab[serial][unit]=[];
-                    caltab[serial][unit].push(parseFloat(cell.textContent));
-                  }
+                    if(row_n==1 && col_n==0)
+                    {
+                      serial=parseInt(cell.textContent,16); // take serial number from row 1 col 0
+                      if(!(serial in caltab))
+                        caltab[serial]={};
+                    }
+                    else if (row_n==2 && col_n==0)
+                    {
+                      unit=cell.textContent.split(" ")[1]; // take unit name from row 2 col 0
+                      if(!(unit in caltab[serial]))
+                        caltab[serial][unit]=[];
+                    }
+                    else if (row_n>2)
+                    {
+                      if(!(serial in caltab))
+                        caltab[serial]={};
+                      if(!(unit in caltab[serial]))
+                        caltab[serial][unit]=[];
+                      prepare_row.push(parseFloat(cell.textContent));
+                      // caltab[serial][unit].push(parseFloat(cell.textContent));
+                    }
                   }
                   col_n+=1;
+                }
+                if(prepare_row.length==1)
+                { // we have one value - copy it to the second value
+                  caltab[serial][unit].push(prepare_row[0]);
+                  caltab[serial][unit].push(prepare_row[0]);
+                }
+                if(prepare_row.length==2)
+                { // we have both values
+                  caltab[serial][unit].push(prepare_row[0]);
+                  caltab[serial][unit].push(prepare_row[1]);
                 }
                 row_n+=1;
               }

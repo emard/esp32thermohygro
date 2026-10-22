@@ -19,8 +19,8 @@
 [x] input field for hostname
 [x] table mouse hover purple - why different color
 [x] reboot
-[ ] bug if calib table is partially filled,
-    if in field has value, but out field is empty
-    then all remaining values will shift unwantedly
+[x] bug if only one value in a calib row is filled,
+    then copy the one to the second value
+    row is deleted only if both values are deleted
 [x] move calibration setting to calib.html page
 [ ] version
