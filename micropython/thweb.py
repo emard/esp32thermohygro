@@ -269,7 +269,7 @@ async def index(request):
 @app.get('/read')
 async def index(request):
   #port=request.args['port'] # argument "port" value 1 given like http://host/json?port=1
-  answer='{"datetime":"%04d-%02d-%02dT%02d:%02d:%02dZ",' % dst.localtime(time())[0:6]
+  answer='{"datetime":"%04d-%02d-%02dT%02d:%02d:%02d",' % dst.localtime(time())[0:6]
   answer+=f'"serial1":{serial1},"t1":{t1:.2f},"rh1":{rh1:.2f},"serial2":{serial2},"t2":{t2:.2f},"rh2":{rh2:.2f},'
   answer+=f'"free":{storagefree()}'
   answer+='}\n'
@@ -409,7 +409,7 @@ async def loop_sensor_read():
     if local_time[0]>2020:
       time_str="%04d-%02d-%02d %02d:%02d:%02d" % local_time[0:6]
     thdisp.netdisp(wifi.ifconfig()[0],time_str)
-    readout="%04d-%02d-%02dT%02d:%02d:%02dZ " % local_time[0:6]
+    readout="%04d-%02d-%02dT%02d:%02d:%02d " % local_time[0:6]
     readout+="%s S1=%08X T1=%5.2f C RH1=%5.2f %% S2=%08X T2=%5.2f C RH2=%5.2f %% " % (wifi.ifconfig()[0],serial1,t1,rh1,serial2,t2,rh2,)
     readout+="FREE=%d bytes" % (storagefree(),)
     print(readout)
