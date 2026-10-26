@@ -108,8 +108,8 @@ def logline()->str:
   except:
     crh2=rh2
   line='"%04d-%02d-%02d %02d:%02d:%02d" ' % dst.localtime(time())[0:6]
-  line+=f"{wifi.ifconfig()[0]} "
-  line+=f"{serial1:08X} {ct1:.2f} {crh1:.2f} {serial2:08X} {ct2:.2f} {crh2:.2f}\n"
+  line+=f'{wifi.ifconfig()[0]} '
+  line+=f'"{serial1:08X}" {ct1:.2f} {crh1:.2f} "{serial2:08X}" {ct2:.2f} {crh2:.2f}\n'
   return line
 
 def daily_ntp_sync(hour_now:int,hour_sync:int):
