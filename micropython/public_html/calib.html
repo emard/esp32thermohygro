@@ -41,7 +41,7 @@
       table.setAttribute("class","editabletable")
       const tbody = document.createElement('tbody');
       tbody.appendChild(create_table_row("th","Serial","Points"));
-      var serial_hex=parseInt(serial).toString(16);
+      var serial_hex=parseInt(serial).toString(16).toUpperCase();
       if(serial>=0) // don't zero-pad negative numbers because -1 is used as empty placeholder
         serial_hex=serial_hex.padStart(8,"0");
       const npoints=Object.keys(values).length;
