@@ -10,5 +10,7 @@ def is_dst(t:int):
   # between last sunday of March and last sunday of October
   return t >= dst_on and t < dst_off
 
+# micropython ntp syncs 1 second too late
+# maybe t+1 should be used
 def localtime(t:int):
   return time.localtime(t+3600*(1+is_dst(t)))
