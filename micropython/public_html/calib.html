@@ -338,9 +338,17 @@
   sensors without calibration.<br/>
   Values on hardware display and web page are direct
   readings from sensors without calibration.<br/>
+  At least 2 points are required for calibration to take effect.<br/>
+  <br/>
+  New SHT85 sensors have serial number as 8-digit hex number<br/>
+  Each SHT85 sensor can have its own calibration table.<br/>
+  Old SHT75 sensors don't have serial number.<br/>
+  Every SHT75 sensor serial number appears as 00000000.<br/>
+  There can be only one calibration table for serial number 00000000<br/>
+  and it will apply to every SHT75 sensor.<br/>
   <br/>
   To add a point: add "In" and "Out" values in the empty row at the bottom row.<br/>
-  To add a table: fill table with serial number -1 with actual serial number and "In" and "Out" values.<br/>
+  To add a table: fill empty table with serial number and "In" and "Out" values.<br/>
   To delete a point: delete both "In" and "Out" fields in the same row.<br/>
   To delete a table: delete all "In" and "Out" fields in all rows but keep the serial number.<br/>
   </p>
