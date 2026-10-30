@@ -153,17 +153,17 @@
       //var json_date=document.getElementById("json_date");
       //json_date.val(json_parsed.datetime.substring(0,10));
       var measurement_date=document.getElementById("answer_hardware_date");
-      measurement_date.innerHTML=json_parsed.datetime.substring(0,10);
+      measurement_date.innerHTML=json_parsed.datetime.substring(0,10); // YYYY-MM-DD
       var measurement_time=document.getElementById("answer_hardware_time");
-      measurement_time.innerHTML=json_parsed.datetime.substring(11,19);
+      measurement_time.innerHTML=json_parsed.datetime.substring(11,16); // HH:MM
       var serial1=document.getElementById("answer_hardware_serial1");
-      serial1.innerHTML=json_parsed.serial1.toString(16).toUpperCase();
+      serial1.innerHTML=json_parsed.serial1.toString(16).toUpperCase().padStart(8,"0"); // with leading zeros
       var t1=document.getElementById("answer_hardware_t1");
       t1.innerHTML=json_parsed.t1.toFixed(2);
       var rh1=document.getElementById("answer_hardware_rh1");
       rh1.innerHTML=json_parsed.rh1.toFixed(2);
       var serial2=document.getElementById("answer_hardware_serial2");
-      serial2.innerHTML=json_parsed.serial2.toString(16).toUpperCase();
+      serial2.innerHTML=json_parsed.serial2.toString(16).toUpperCase().padStart(8,"0"); // with leading zeros
       var t2=document.getElementById("answer_hardware_t2");
       t2.innerHTML=json_parsed.t2.toFixed(2);
       var rh2=document.getElementById("answer_hardware_rh2");
@@ -209,17 +209,17 @@
       return (60-seconds)*1000 - milliseconds;
     }
  
+    // first run immediately, then every full minute
     function runAtEveryFullMinute(callback) {
-      // Calculate delay until next full hour
-      const initialDelay = getTimeUntilNextMinute();
- 
-      // Run once at the next full minute
-      setTimeout(() => {
-        // Execute the callback
-        callback();
-        // Schedule subsequent runs every minute
-        setInterval(callback, 60*1000); // 1 minute = 60000 ms
-      }, initialDelay);
+      callback(); // executes the callback immediately
+      // execute again after timeout
+      setTimeout(() => { // lambda function
+        // Run this function after timeout
+        runAtEveryFullMinute(callback);
+        // Schedule next run at next full minute + 2 seconds (2000 ms)
+        // ntp synced time in controller is usually 1 second late
+        // this will catch next minute
+      }, getTimeUntilNextMinute()+2000);
     }
 
     window.onload = function ()
@@ -227,8 +227,6 @@
       // document.getElementById("example_form").addEventListener("submit", answer_form);
       // answer_form();
       get_hostname(); // who we are
-      form_answer_hardware_json(); // execute immediately after page load
-      //setInterval(form_answer_hardware_json, 60*1000); // peridically execute in minute intervals
       runAtEveryFullMinute(form_answer_hardware_json);
       form_answer_get_log_events();
       //log_fill_html("1");
