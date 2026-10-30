@@ -34,16 +34,13 @@
     }
 
     // Function to create a table
-    function createTable(id,serial,unit,values)
+    function createTable(id,serial_hex,unit,values)
     {
       const table = document.createElement('table');
       table.id = id;
       table.setAttribute("class","editabletable")
       const tbody = document.createElement('tbody');
       tbody.appendChild(create_table_row("th","Serial","Points"));
-      var serial_hex=parseInt(serial).toString(16).toUpperCase();
-      if(serial>=0) // don't zero-pad negative numbers because -1 is used as empty placeholder
-        serial_hex=serial_hex.padStart(8,"0");
       const npoints=Object.keys(values).length;
       tbody.appendChild(create_table_row("td",serial_hex,Math.floor(npoints/2)));
       unit_str="";
@@ -86,20 +83,25 @@
       var calibration_tables=document.getElementById("calibration_tables");
       const tablesArray = [];
       for(const serial in json_parsed)
+      {
+        var serial_hex=parseInt(serial).toString(16).toUpperCase();
+        if(serial>=0) // don't zero-pad negative numbers because -1 is used as empty placeholder
+          serial_hex=serial_hex.padStart(8,"0");
         for(const unit in sortObject_descending(json_parsed[serial]))
         {
           const table =
-          createTable(`caltab_${serial}_${unit}`,serial,unit,json_parsed[serial][unit]);
+          createTable(`caltab_${serial}_${unit}`,serial_hex,unit,json_parsed[serial][unit]);
           tablesArray.push(table);
           calibration_tables.appendChild(table); // Append to the body or a specific parent element
           const newline=document.createElement("br");
           calibration_tables.appendChild(newline);
         }
+      }
       // create two empty tables one for T other for RH to add new sensor
       for(const unit of ["T","RH"])
       {
         const table =
-        createTable("caltab_0_"+unit,"-1",unit,[]); // empty table to add new calibration
+        createTable("caltab_0_"+unit,"",unit,[]); // empty table to add new calibration
         tablesArray.push(table);
         calibration_tables.appendChild(table); // Append to the body or a specific parent element
         const newline=document.createElement("br");
