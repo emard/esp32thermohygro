@@ -289,6 +289,8 @@ def calib2json(x):
     # key can't be integer, it should be string with double quotes
     # in the value, string keys with single quoutes should be replaced to double
     json+='"%d":%s' % (key,str(value).replace("'",'"'))
+  if json=="":
+    json="{"
   json+="}"
   return json
 
@@ -303,7 +305,7 @@ def calibjson2dict(json):
 async def index(request):
   try:
     newcalib=request.args['set'] # argument "set" value given is a json string containing a dictionary
-    print(newcalib)
+    #print(newcalib)
     #print(calibjson2dict(newcalib))
     thcalib.calib=calibjson2dict(newcalib)
     load_calib()
